@@ -7,7 +7,7 @@ export default new VueRouter({
     mode:'history',
     routes:[
         {
-            path:'/login',
+            path:'/api/login',
             name:'FrontView',
             component: FrontView,
         }

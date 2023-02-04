@@ -9,7 +9,7 @@
                 <div class="card-body" style = "padding-top: 30%;text-align: center;">
                     <h3 class="card-title text-center mb-4">Enter BlogLite</h3>
                     <div >
-                        <form @submit.prevent = "submit" method = "POST">
+                        <form id = "login-form" @submit.prevent = "submit" method = "POST">
                             <input type = "text" class="form-control form-control-lg" id = "username" name = "login-username" autocomplete="off" placeholder = "username" required /><br>
                             <input type = "password" class="form-control form-control-lg" id = "password" name = "login-password" autocomplete="off" placeholder = "password" required>
                             <!-- {% if message | default(false)  %}
@@ -40,25 +40,22 @@ export default{
         return {
             dataentry: {
                 name:"",
-                department:"",
+                password:"",
             },
         };
     },
     methods:{
         submit: function(){
-            const path = 'http://127.0.0.1:5000/api/login'
-            axios.post(path, {
-                name: this.login_username,
-                department: this.login_password,
+            const path = 'http://127.0.0.1:5000/api/login';
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const returnObj = axios.post(path, {name: username, password: password}, 
+                                        {headers: {'Content-Type': 'application/json'}}).data
+            if (returnObj.status === "Authenticated"){
+                window.location.href = '../${returnObj.username}/homepage';
             }
-            )
-            .then(response => {
-                console.log(response);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-        },
+            window.console.log(returnObj);
+        }
     }
 }
 </script>

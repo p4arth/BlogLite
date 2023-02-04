@@ -48,16 +48,19 @@ def verify_login(username = None, password = None):
 
 @app.route("/", methods = ["GET", "POST"])
 @app.route("/api/login", methods = ["GET", "POST"])
-@cross_origin(origin = '*', headers = ['content-type'])
+@cross_origin(origin = '*', headers = ['Content-type'])
 def login_page():
     if request.method == "POST":
-        print(request.form)
+        print(request)
+        print()
+        json_data = request.get_json()
         try:
-            username = request.form.get("login-username")
-            password = request.form.get("login-password")
+            username = json_data["name"]
+            password = json_data["password"]
             session_verified = verify_login(username, password)
+            print(session_verified)
             if session_verified:
-                return redirect(f"/{username}/homepage")
+                return jsonify({"username": username, "status": "Authenticated"})
             else:
                 return jsonify({"username": username, "status": "Not Authenticated"})
         except:

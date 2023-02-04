@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <title>BlogLite</title>
+    <style>
+        body {
+          width: 100%;
+        }
+    </style>
+    <style>
+        #login-button{
+            margin:8px;
+        }
+        #message{
+          background-color: red;
+          margin-left: 9%;
+          margin-right: 9%;
+          margin-top: 2%;
+          margin-bottom: -1%;
+          color: white;
+          border-radius: 6px;
+        }
+    </style>
+  </head>
+    <body>
+        <div class="container">
+            <div class="row">
+              <div class="col-6" style = "padding-top: 15%;padding-left: 10%;">
+                <img src="/static/login_image.png" width="500" height="500">
+              </div>
+              <div class="col-6" style = "padding-top: 10%;padding-right: 15%;">
+                <div class="card mx-auto" style="width: 20rem;height: 40rem;">
+                    <div class="card-body" style = "padding-top: 30%;text-align: center;">
+                        <h3 class="card-title text-center mb-4">Enter BlogLite</h3>
+                        <div >
+                          <form method = "POST">
+                              <input type = "text" class="form-control form-control-lg" id = "username" name = "login-username-newuser" placeholder = "New Username" autocomplete="off" required /><br>
+                              <input type = "password" class="form-control form-control-lg" id = "password" name = "login-password-newuser" placeholder = "New Password" autocomplete="off" required>
+                              {% if message | default(false)  %}
+                                <p id = "message">{{ message }}</p>
+                              {% endif %}
+                              <button type="submit" id = "login-button" class="btn btn-primary">Sign Up</button>
+                          </form>
+                        </div>
+                        <div>
+                          <p>
+                              Already a user?
+                              <a href = "/">
+                                  Log in!
+                              </a>
+                          </p>
+                      </div>
+                </div>
+            </div>
+              </div>
+            </div>
+        </div>
+    </body>
+</html>

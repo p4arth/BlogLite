@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block new_article_style %}
+<style>
+  #followObj:hover{
+    color: lightblue;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="col-5" style = "clear:both;float: left;padding-left: 6%;padding-top: 3%;">
+  <div class = "card">
+    <div class="card-body">
+      <p class="card-text">
+        <div class="card-body text-left">
+          {% if default_profile_picture != "nan" %}
+            <img src={{ default_profile_picture }} alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+          {% else %}
+            <img src="/static/blankpropic.png" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+          {% endif %}
+              {% if flag == True %}
+              <button title= "Change Profile Picture" type="button" class="btn btn-outline-secondary" style = "padding-top:0;padding-bottom:0;padding-left:4px;padding-right:4px;border-top-width: 1px;height: 22px;width: 22px;" data-bs-toggle="modal" data-bs-target="#pictureModal">
+                <img alt= "Change Profile Picture" src = "/static/change.png" width = 12 height = 12 style = "border-bottom-width: 2px;margin-bottom: 8px;">
+              </button>
+              {% endif %}
+              <h5 class="my-3">{{ profile_username or username }}</h5>
+              <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+              {% if flag == False %}
+              <form method="POST" target="hiddenFrame" onsubmit="document.location.reload(true);return False;">
+                <input name = "follow-button" type="submit" class = "btn btn-sm" style="background-color:green;color:white;width:150px;" value="{{ follow_value }}" onclick="change(this);" />
+                <!-- Follow Function -->
+                <script type="text/javascript">
+                  function change( el )
+                  {
+                      if ( el.value === "Follow" )
+                          el.value = "Following";
+                      else
+                          el.value = "Follow";
+                  }
+                </script>
+              </form>
+              <br>
+              {% endif %}
+              <div style = "text-align: left;">
+                <small style = "text-align: left;">
+                  {% if default_profile_picture != "nan" %}
+                    {{ default_bio_text }}
+                  {% else %}
+                    Add Bio
+                  {% endif %}
+                  {% if flag == True %}
+                  <button title= "Edit Bio" type="button" class="btn btn-outline-secondary" style = "padding-top:0;padding-bottom:0;padding-left:4px;padding-right:4px;border-top-width: 1px;height: 22px;width: 22px;"   data-bs-toggle="modal" data-bs-target="#bioModal">
+                    <img src = "/static/pencil.svg" width = 12 height = 12 style = "border-bottom-width: 2px;margin-bottom: 8px;">
+                  </button>
+                  {% endif %}
+                </small>
+              </div>
+              <br>
+              <p id = "followObj" data-bs-toggle="modal" data-bs-target="#exampleModal1" style="display: inline-block; margin-right: 0px;">
+                {{ follower_count }} Followers
+              </p>
+              <p style="display: inline-block; margin-right: 0px;">
+                • 
+              </p>
+              <p id = "followObj" data-bs-toggle="modal" data-bs-target="#exampleModal2" style="display: inline-block;">
+                {{ following_count }} Following
+              </p>
+              
+              <!-- Followers Modal -->
+              <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Followers</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {% for follower in followers_info %}
+                      <div>
+                        <div class="card card-sm">
+                          <div class="card-body">
+                            <a href="/{{ username }}/profile/{{ follower.username }}" style = "color:inherit;text-decoration:none">
+                              <h5>
+                                {{ follower.username }}
+                              </h5>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Following modal -->
+              <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Following</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {% for follower in following_info %}
+                      <div>
+                        <div class="card card-sm">
+                          <div class="card-body">
+                            <a href="/{{ username }}/profile/{{ follower.follows }}" style = "color:inherit;text-decoration:none">
+                              <h5>
+                                {{ follower.follows }}
+                              </h5>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Edit Bio Text Modal -->
+              <div class="modal fade" id="bioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Enter New Bio</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class = "modal-body">
+                      <p>
+                        Please keep the bio length short.
+                      </p>
+                      <form name = "newBioText" id="bioForm" method = "POST" action = "./my-profile">
+                        <input name = "newBioText" class="form-control form-control-light rounded-pill" autocomplete="off" style = "margin-bottom: 10px;">
+                        <input type="button" onclick="submitFunction()" value="Save">
+                      </form>
+                      <script>
+                        function submitFunction() {
+                          document.getElementById("bioForm").submit();
+                        }
+                      </script>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Edit Profile Picture modal -->
+              <div class="modal fade" id="pictureModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Enter New Profile Picture link</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class = "modal-body">
+                      <form id="pictureForm" method = "POST" action = "./my-profile">
+                        <input name = "pictureLink" class="form-control form-control-light rounded-pill" autocomplete="off" style = "margin-bottom: 10px;">
+                        <input type="button" onclick="submitFunction()" value="Save">
+                      </form>
+                      <script>
+                        function submitFunction() {
+                          document.getElementById("pictureForm").submit();
+                        }
+                      </script>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </p>
+    </div>
+  </div>
+</div>
+<div class = "col-5" style = "padding-top:40px;">
+  <div class="card text" >
+    <div class="card-body">
+      {% for post in profile_blogs %}
+      <div class="card mb-3 w-100" style="max-width: 200%;object-fit: contain">
+        <div class="row g-0">
+          <div class="col-md-8">
+            <div class="card-body">
+              <a href="./view/writer_name={{ post.username }}&post_id={{ post.id }}" style = "color: inherit;text-decoration:none;">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <p class="card-text">{{ post.caption[0:50] }}...</p>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-4">
+            {% if post.image_url != "" and post.image_url is not none %}
+            <img src="{{ post.image_url }}" class="img-fluid rounded-start" style = "max-width: 100%; max-height: 100%;">
+            {% else %}
+            <img src="/static/A_black_image.jpg" class="img-fluid rounded-start">
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

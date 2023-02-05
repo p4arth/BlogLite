@@ -7,5 +7,8 @@
  <script>
   export default {
     name: 'App',
+    testLog(msg) {
+      console.log(msg);
+    }
   }
  </script>

@@ -8,7 +8,7 @@
             <div class="card mx-auto" style="width: 20rem;height: 40rem;">
                 <div class="card-body" style = "padding-top: 30%;text-align: center;">
                     <h3 class="card-title text-center mb-4">Enter BlogLite</h3>
-                    <div >
+                    <div id = "login-form-div">
                         <form id = "login-form" @submit.prevent = "submit" method = "POST">
                             <input type = "text" class="form-control form-control-lg" id = "username" name = "login-username" autocomplete="off" placeholder = "username" required /><br>
                             <input type = "password" class="form-control form-control-lg" id = "password" name = "login-password" autocomplete="off" placeholder = "password" required>
@@ -18,14 +18,14 @@
                             <button type="submit" id = "login-button" class="btn btn-primary">Log In</button>
                         </form>
                     </div>
-                    <!-- <div>
+                    <div>
                         <p>
                             New User?
                             <a href = "/signup">
                                 Sign Up!
                             </a>
                         </p>
-                    </div> -->
+                    </div>
             </div>
         </div>
             </div>
@@ -49,12 +49,27 @@ export default{
             const path = 'http://127.0.0.1:5000/api/login';
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            const returnObj = axios.post(path, {name: username, password: password}, 
-                                        {headers: {'Content-Type': 'application/json'}}).data
-            if (returnObj.status === "Authenticated"){
-                window.location.href = '../${returnObj.username}/homepage';
-            }
-            window.console.log(returnObj);
+            const result = axios.post(path,
+                       {name: username, password: password}, 
+                       {headers: {'Content-Type': 'application/json'}})
+                       .then((response) => response.data)
+                       .then((user) => {
+                        return [user.username, user.status];
+                       });
+            
+            const changes = async () => {
+                const [username, status] = await result;
+                if(status === "Authenticated"){
+                    window.location.href = `../${username}/homepage`;
+                }
+                else{
+                    const loginDiv = document.getElementById("login-form-div");
+                    const newP =  document.createElement("p");
+                    newP.innerText = "Unable to Authenticate. Try again!";
+                    loginDiv.appendChild(newP);
+                }
+            };
+            changes();
         }
     }
 }

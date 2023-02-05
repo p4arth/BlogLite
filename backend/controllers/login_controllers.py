@@ -19,40 +19,38 @@ def verify_login(username = None, password = None):
                 return True
             return False
 
-# @app.route("/signup", methods = ["GET", "POST"])
-# def signup_page():
-#     if request.method == "POST":
-#         try:
-#             username = request.form.get("login-username-newuser")
-#             password = request.form.get("login-password-newuser")
-#             if User.query.filter_by(username = username).first() is not None:
-#                 return render_template("signup.html", message = "That username is already taken.")
-#             else:
-#                 new_user = User(
-#                     _username = username,
-#                     _password = password,
-#                     _followers = 0,
-#                     _posts = 0
-#                 )
-                
-#                 db.session.add(new_user)
-#                 db.session.commit()
-#                 user_csv = pd.read_csv("./instance/metadata.csv")
-#                 user_csv.loc[len(user_csv.index)] = [new_user.username, "", ""]
-#                 user_csv.to_csv("./instance/metadata.csv", index = False)
-#                 return redirect("/")
-#         except:
-#             # return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-#     else:
-#         # return render_template("signup.html")
+@app.route("/", methods = ["POST"])
+@app.route("/api/signup", methods = ["POST"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+def signup_page():
+    try:
+        json_data = request.get_json()
+        username = json_data["name"]
+        password = json_data["password"]
+        if User.query.filter_by(username = username).first() is not None:
+            return jsonify({"username": username, "status": "Username is already taken"})
+        else:
+            new_user = User(
+                _username = username,
+                _password = password,
+                _followers = 0,
+                _posts = 0
+            )
+            
+            db.session.add(new_user)
+            db.session.commit()
+            user_csv = pd.read_csv("./instance/metadata.csv")
+            user_csv.loc[len(user_csv.index)] = [new_user.username, "", ""]
+            user_csv.to_csv("./instance/metadata.csv", index = False)
+            return jsonify({"username": username, "status": "New User Created"})
+    except:
+        return jsonify({"username": username, "status": "Unable to create user"})
 
-@app.route("/", methods = ["GET", "POST"])
-@app.route("/api/login", methods = ["GET", "POST"])
+@app.route("/", methods = ["POST"])
+@app.route("/api/login", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def login_page():
     if request.method == "POST":
-        print(request)
-        print()
         json_data = request.get_json()
         try:
             username = json_data["name"]
@@ -65,8 +63,6 @@ def login_page():
                 return jsonify({"username": username, "status": "Not Authenticated"})
         except:
             return jsonify({"username": username, "status": "Error"})
-    else:
-        return render_template("login_page.html")
 
 @app.route("/<username>/homepage")
 def display_user_homepage(username):

@@ -1,6 +1,7 @@
 from sqlite3 import Timestamp
 from turtle import title
-from app import db
+from app import db, ma
+
 class User(db.Model):
     __tablename__ = 'user'
     username = db.Column(db.String, primary_key = True, nullable = False)
@@ -48,3 +49,19 @@ class Followers(db.Model):
     def __init__(self, username_, follows_):
         self.username = username_
         self.follows = follows_
+
+
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ("username", "password", "follower_count", "post_count")
+
+class PostSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "title", "caption", "username", "image_url", "timestamp")
+
+# class FollowersSchema(ma.Schema):
+#     class Meta:
+#         fields = ("username", "password", "follower_count", "post_count")
+
+# user_schema = UserSchema()
+# users_schema = UserSchema(many=True)

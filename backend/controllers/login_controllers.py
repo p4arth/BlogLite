@@ -1,13 +1,12 @@
 from models.models import *
 import numpy as np
-from models.models import Post, db
+from models.models import Post, db, UserSchema, PostSchema
 from app import app
-from flask import render_template
 from flask import request, jsonify
-from flask import redirect
+# from flask import redirect
 import random
 import pandas as pd
-from flask_cors import CORS, cross_origin
+from flask_cors import cross_origin
 
 def verify_login(username = None, password = None):
     is_user = User.query.filter_by(username = username).first()
@@ -64,13 +63,17 @@ def login_page():
         except:
             return jsonify({"username": username, "status": "Error"})
 
-@app.route("/<username>/homepage")
+@app.route("/api/<username>/homepage", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
 def display_user_homepage(username):
     try:
+        print("-"*50)
+        posts_schema = PostSchema(many = True)
         recent_feed_data, user_blogs_data = user_feed_data(username)
         posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
-        recommended_posts = list(np.random.choice(posts, 3))
-        users = db.session.query(User).filter(User.username != username).all()
+        # recommended_posts = list(np.random.choice(posts, 3))
+        # users = db.session.query(User).filter(User.username != username).all()
+        return posts_schema.dump(recent_feed_data)
         # return render_template("homepage.html",
         #                         username = username,
         #                         some_users = users[:5],
@@ -83,7 +86,6 @@ def display_user_homepage(username):
 
 def user_feed_data(username):
     following = db.session.query(Followers).filter(Followers.username == username).all()
-    
     following = [x.follows for x in following]
     post_objs_list = []
     for follower in following:

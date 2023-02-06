@@ -1,9 +1,10 @@
 # Import Initializations.
 import os
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Resource, Api
+from flask_restful import Api
 from flask_cors import CORS
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__,
             static_folder = str(os.getcwd())+ r"/static",
@@ -13,6 +14,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 DATABASE_PATH = "sqlite:///" + str(os.getcwd()) + "/instance/database.sqlite3"
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_PATH
 api = Api(app)
+ma = Marshmallow(app)
 db = SQLAlchemy()
 db.init_app(app)
 app.app_context().push()

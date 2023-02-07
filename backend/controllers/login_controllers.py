@@ -69,11 +69,15 @@ def display_user_homepage(username):
     try:
         print("-"*50)
         posts_schema = PostSchema(many = True)
+        users_schema = UserSchema(many = True)
         recent_feed_data, user_blogs_data = user_feed_data(username)
         posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
         # recommended_posts = list(np.random.choice(posts, 3))
-        # users = db.session.query(User).filter(User.username != username).all()
-        return posts_schema.dump(recent_feed_data)
+        users = db.session.query(User).filter(User.username != username).all()
+        if len(recent_feed_data) > 0:
+            return posts_schema.dump(recent_feed_data)
+        else:
+            return users_schema.dump(users[:5])
         # return render_template("homepage.html",
         #                         username = username,
         #                         some_users = users[:5],
@@ -83,6 +87,13 @@ def display_user_homepage(username):
     except:
         pass
         # return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
+
+@app.route("/api/<username>", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+def get_user_details(username):
+    user_schema = UserSchema()
+    user = db.session.query(User).filter((User.username == username)).first()
+    return user_schema.dump(user)
 
 def user_feed_data(username):
     following = db.session.query(Followers).filter(Followers.username == username).all()

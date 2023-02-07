@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router';
+// import {useRoute} from 'vue-router';
 export default {
     name: "NavBar",
     data() {
@@ -53,8 +53,7 @@ export default {
         } 
     },
     mounted(){
-        const route = useRoute();
-        this.username = route.params.username;
+        this.username = this.$route.params.username;
     }
 }
 // export default{

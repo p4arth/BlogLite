@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <router-view />
+   <!-- <router-view /> -->
    <div class="container" style = "min-height: 200%;!important">
         <div class="row">
           <navbar />
@@ -8,7 +8,7 @@
         </div>
     </div>
   </div>
- </template>
+</template>
 
 <script>
   import navbar from "./components/navbar.vue";

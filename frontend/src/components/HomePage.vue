@@ -4,39 +4,36 @@
         Blogs from people you follow
     </h3>
     <div v-for="item in followerBlogs" :key="item.id" class="card mb-3 w-100" style="max-width: 200%;object-fit: contain">
-      {{ item }}
-      <!-- <div class="row g-0">
+      <div class="row g-0">
         <div class="col-md-8">
           <div class="card-body">
-            <a href="./view/writer_name={{ post.username }}&post_id={{ post.id }}" style = "color: inherit;text-decoration:none;">
-              <h5 class="card-title">{{ post.title }}</h5>
-              <p class="card-text text-truncate">{{ post.caption }}...</p>
+            <a :href="`./view/writer_name={{ item.username }}&post_id={{ item.id }}`" style = "color: inherit;text-decoration:none;">
+              <h5 class="card-title">{{ item.title }}</h5>
+              <p class="card-text text-truncate">{{ item.caption }}...</p>
             </a>
             <p class="card-text" style="display: inline-block; margin-right: 0px;">
               <small class="text-muted">Published by </small>
             </p>
             <p class="card-text" style="display: inline-block; margin-right: 0px;">
               <small  class="text-muted">
-                <a href = "./profile/{{ post.username }}"  style = "color: inherit;">
-                  {{ post.username }}
+                <a :href="`./profile/{{ item.username }}`"  style = "color: inherit;">
+                  {{ item.username }}
                 </a>
               </small>
             </p>
             <p class="card-text" style="display: inline-block; margin-right: 0px;">
-              <small class="text-muted"> on {{ post.timestamp[:-9] }}</small>
+              <small class="text-muted"> on {{ item.timestamp }}</small>
             </p>
           </div>
         </div>
         <div class="col-md-4">
-          {% if post.image_url != "" and post.image_url is not none %}
-          <img src="{{ post.image_url }}" class="img-fluid rounded-start" style = "max-width: 100%; max-height: 100%;">
-          {% else %}
-          <img src="/static/A_black_image.jpg" class="img-fluid rounded-start">
-          {% endif %}
+          <img v-if="item.image_url" :src="`${item.image_url}`" class="img-fluid rounded-start" style = "max-width: 100%; max-height: 100%;">
+          <!-- <img src="/static/A_black_image.jpg" class="img-fluid rounded-start">
+          {% endif %} -->
         </div>
       </div>
-    </div> -->
     </div>
+    <!-- </div> -->
   </div>
     <!-- <div class="col-7" style = "clear:both;float: left;padding-left: 6%;padding-top: 3%;">
       <h3 class="pb-3 mb-4 font-italic border-bottom">
@@ -151,22 +148,23 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router';
-import axios from 'axios';
-
 export default {
     data() {
         return {
             followerBlogs: [],
+            fetching: false,
         }
     },
     created() {
-      const route = useRoute();
-      const path = `http://127.0.0.1:5000/api/${route.params.username}/homepage`;
-      console.log("-----------------------------------")
-      this.followerBlogs = axios.get(path)
-                                    .then((response) => response.data);
-      console.log(this.followerBlogs);
+      if(!this.fetching){
+        this.fetching = true;
+        const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/homepage`;
+        fetch(path)
+        .then(response => response.json())
+        .then(data => {
+          this.followerBlogs = data
+        })
+      }
     },
 }
 

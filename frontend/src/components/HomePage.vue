@@ -184,7 +184,9 @@
 <script>
 import navbar from "./navbar.vue";
 export default {
-    extends: navbar,
+    components: {
+      navbar
+    },
     data() {
         return {
             followerBlogs: [],

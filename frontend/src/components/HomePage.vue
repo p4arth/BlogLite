@@ -1,5 +1,7 @@
 <template>
+  
   <div class="col-7" style = "clear:both;float: left;padding-left: 6%;padding-top: 3%;">
+    <navbar />
     <h3 class="pb-3 mb-4 font-italic border-bottom">
         Blogs from people you follow
     </h3>
@@ -180,7 +182,9 @@
 </template>
 
 <script>
+import navbar from "./navbar.vue";
 export default {
+    extends: navbar,
     data() {
         return {
             followerBlogs: [],

@@ -54,12 +54,13 @@ export default{
                        {headers: {'Content-Type': 'application/json'}})
                        .then((response) => response.data)
                        .then((user) => {
-                        return [user.username, user.status];
+                        return [user.username, user.status, user.auth_token];
                        });
             
             const changes = async () => {
-                const [username, status] = await result;
+                const [username, status, token] = await result;
                 if(status === "Authenticated"){
+                    console.log(token);
                     window.location.href = `../${username}/homepage`;
                 }
                 else{

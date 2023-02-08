@@ -11,6 +11,7 @@ app = Flask(__name__,
             template_folder = str(os.getcwd())+ r"/templates")
 CORS(app, resources={r"/api": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['SECRET_KEY'] = 'thisissecret'
 DATABASE_PATH = "sqlite:///" + str(os.getcwd()) + "/instance/database.sqlite3"
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_PATH
 api = Api(app)

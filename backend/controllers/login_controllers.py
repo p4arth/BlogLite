@@ -4,9 +4,28 @@ from models.models import Post, db, UserSchema, PostSchema
 from app import app
 from flask import request, jsonify
 # from flask import redirect
+import jwt
+from functools import wraps
 import random
 import pandas as pd
 from flask_cors import cross_origin
+import datetime
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token:
+            return jsonify({'message' : 'Token is missing!'}), 401
+        try: 
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+            current_user = User.query.filter_by(username = data["username"]).first()
+        except:
+            return jsonify({'message' : 'Token is invalid!'}), 401
+        return f(current_user, *args, **kwargs)
+    return decorated
 
 def verify_login(username = None, password = None):
     is_user = User.query.filter_by(username = username).first()
@@ -18,7 +37,7 @@ def verify_login(username = None, password = None):
                 return True
             return False
 
-@app.route("/", methods = ["POST"])
+# @app.route("/", methods = ["POST"])
 @app.route("/api/signup", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def signup_page():
@@ -55,13 +74,18 @@ def login_page():
             username = json_data["name"]
             password = json_data["password"]
             session_verified = verify_login(username, password)
-            print(session_verified)
             if session_verified:
-                return jsonify({"username": username, "status": "Authenticated"})
+                token = jwt.encode({"username": username, 
+                                    "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)},
+                                    key = app.config["SECRET_KEY"])
+                print(token)
+                return jsonify({"username": username, 
+                                "status": "Authenticated",
+                                "auth_token": token})
             else:
-                return jsonify({"username": username, "status": "Not Authenticated"})
+                return jsonify({"username": username, "status": "Not Authenticated", "auth_token": None})
         except:
-            return jsonify({"username": username, "status": "Error"})
+            return jsonify({"username": username, "status": "Error", "auth_token": None})
 
 @app.route("/api/<username>/homepage", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])

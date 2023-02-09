@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import loginView from '../components/loginView.vue';
 import signupView from "../components/signupView.vue";
 import HomePage from "../components/HomePage.vue";
+import MyBlogs from "../components/MyBlogs.vue";
 // import App from "../App.vue";
 // import base from "../components/navbar.vue";
 Vue.use(VueRouter);
@@ -25,10 +26,10 @@ export default new VueRouter({
             name: "Homepage",
             component: HomePage
         },
-        // {
-        //     path: "/:username/publish_new_article",
-        //     name: "NewArticle",
-        //     componet: App,
-        // }
+        {
+            path: "/:username/my-blogs",
+            name: "MyBlogs",
+            component: MyBlogs,
+        }
     ],
 })

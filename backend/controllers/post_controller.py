@@ -1,10 +1,11 @@
 from datetime import datetime
 from models.models import *
-from app import app
+from app import app, token_required
 from flask import render_template
 from flask import request
 from flask import redirect
 from sqlalchemy import exc
+from flask_cors import cross_origin
 
 @app.route("/<username>/publish_new_article", methods = ["GET", "POST"])
 def publish_post(username):
@@ -122,10 +123,11 @@ def delete_article(username, writer_name = None, post_id = None):
             return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
         return redirect(f"/{username}/my-blogs")
 
-@app.route("/<username>/my-blogs")
+@app.route("/api/<username>/my-blogs")
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
 def my_blogs_redir(username):
-     posts = db.session.query(Post).filter((Post.username == username)).all()
-     return render_template("my_blogs.html", 
-                            posts = posts, 
-                            username = username)
+    posts_schema = PostSchema(many=True)
+    posts = db.session.query(Post).filter((Post.username == username)).all()
+    return posts_schema.dump(posts)
 

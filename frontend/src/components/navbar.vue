@@ -1,13 +1,13 @@
 <template>
     <div class="col-md-1 col-lg-1 border " style = "padding-top:-10%;padding-bottom: 100%;">
         <div class="d-flex flex-column flex-shrink-0 bg-light" style="width:4.5rem;margin:0px;position: fixed;padding-top: 13%;">
-            <a :href="`.${username}/homepage`" class="d-block p-3 link-dark text-decoration-none border-bottom" title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a :href="`../${username}/homepage`" class="d-block p-3 link-dark text-decoration-none border-bottom" title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
                 <img src="../assets/home.png" alt = "Home" style = "padding-left:5px;" width="36" height="30">
             </a>
-            <a :href="`.${username}/publish_new_article`" style = "padding-left:22px;" class="nav-link py-3 border-bottom" title="Publish" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a :href="`../${username}/publish_new_article`" style = "padding-left:22px;" class="nav-link py-3 border-bottom" title="Publish" data-bs-toggle="tooltip" data-bs-placement="right">
                 <img src="../assets/publish.png"  width="33" height="32">
             </a>
-            <a :href="`.${username}/my-blogs`" class="nav-link py-3 border-bottom" title="My Blogs" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a :href="`../${username}/my-blogs`" class="nav-link py-3 border-bottom" title="My Blogs" data-bs-toggle="tooltip" data-bs-placement="right">
                 <img src="../assets/my_blogs.png" style = "padding-left:5px;" width="40" height="35" >
             </a>
             <div class="dropdown border-top">

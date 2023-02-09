@@ -35,6 +35,7 @@
 
 <script>
 import axios from 'axios';
+import setAuthHeader from '../utils/setAuthHeader.js';
 export default{
     data(){
         return {
@@ -60,7 +61,8 @@ export default{
             const changes = async () => {
                 const [username, status, token] = await result;
                 if(status === "Authenticated"){
-                    console.log(token);
+                    localStorage.setItem("jwtToken", token);
+                    setAuthHeader(token);
                     window.location.href = `../${username}/homepage`;
                 }
                 else{

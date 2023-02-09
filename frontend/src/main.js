@@ -4,6 +4,15 @@ import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from "./router/routes.js";
+import setAuthHeader from './utils/setAuthHeader.js';
+
+
+if(localStorage.jwtToken){
+  setAuthHeader(localStorage.jwtToken);
+}
+else{
+  setAuthHeader(false);
+}
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)

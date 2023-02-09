@@ -15,16 +15,15 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
         if not token:
             return jsonify({'message' : 'Token is missing!'}), 401
         try: 
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(username = data["username"]).first()
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms = ['HS256'])
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
-        return f(current_user, *args, **kwargs)
+        return f(data["username"])
     return decorated
 
 def verify_login(username = None, password = None):
@@ -78,7 +77,6 @@ def login_page():
                 token = jwt.encode({"username": username, 
                                     "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)},
                                     key = app.config["SECRET_KEY"])
-                print(token)
                 return jsonify({"username": username, 
                                 "status": "Authenticated",
                                 "auth_token": token})
@@ -89,9 +87,9 @@ def login_page():
 
 @app.route("/api/<username>/homepage", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
 def display_user_homepage(username):
     try:
-        print("-"*50)
         posts_schema = PostSchema(many = True)
         users_schema = UserSchema(many = True)
         recent_feed_data, user_blogs_data = user_feed_data(username)
@@ -99,18 +97,12 @@ def display_user_homepage(username):
         # recommended_posts = list(np.random.choice(posts, 3))
         users = db.session.query(User).filter(User.username != username).all()
         if len(recent_feed_data) > 0:
+            print(1)
             return posts_schema.dump(recent_feed_data)
         else:
             return users_schema.dump(users[:5])
-        # return render_template("homepage.html",
-        #                         username = username,
-        #                         some_users = users[:5],
-        #                         recent_feed_data = recent_feed_data,
-        #                         user_blogs_data = user_blogs_data, 
-        #                         recommended_posts = recommended_posts)
     except:
         pass
-        # return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
 
 @app.route("/api/<username>", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])

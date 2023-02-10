@@ -2,7 +2,7 @@
 <div class="container" style = "min-height: 200%;!important">
         <div class = "row">
             <div class="col-md-1 col-lg-1 border " style = "padding-top:-10%;padding-bottom: 100%;">
-                <navbar />
+                <NavBar />
             </div>
             <div class="col-7" style = "clear:both;float: left;padding-left: 6%;padding-top: 3%;">
                 <h3 class="pb-3 mb-4 font-italic border-bottom">
@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import navbar from "./navbar.vue";
+import NavBar from "./NavBar.vue";
 export default {
-    extends: navbar,
+    extends: NavBar,
     components: {
-      navbar
+        NavBar
     },
     data() {
         return {

@@ -19,7 +19,7 @@
               <li class="list-group-item">
                 <div>
                   <p class = "auth-message">
-                    Get Started!
+                    {{ message }}
                   </p>
                 </div>
                 <div>
@@ -35,6 +35,12 @@
                     </div>
                     <input type="submit" value="Sign Up">
                   </form>
+                  <div>
+                    Already a user? 
+                    <a :href="`${path_url}`">
+                      Log In
+                    </a>
+                  </div>
                 </div>
               </li>
             </ul>
@@ -45,11 +51,31 @@
 </template>
   
 <script>
-  import NavBar from './NavBar.vue';
+import NavBar from './NavBar.vue';
   export default {
     name: 'FrontPage',
     components: {
       NavBar,
+    },
+    data() {
+      return {
+        message: "Get Started!",
+        path_url: "./login"
+      }
+    },
+    mounted(){
+      const path = window.location.href;
+      // console.log(typeof path);
+      if(path.includes("login")){
+        if(this.message == "Get Started!"){
+          this.message = "Welcome Back."
+          this.path_url = "./signup"
+          let element = document.getElementById("email");
+          console.log(element);
+          element.remove();
+
+        }
+      }
     },
   }
 </script>
@@ -65,6 +91,7 @@
     font-family: 'montserrat', sans-serif;
   }
   header {
+
     width: 100%;
     background-color: rgb(179, 238, 248);
     padding: 10px;
@@ -127,7 +154,7 @@
     border: 2px solid rgb(245, 243, 239);
     border-radius: 20px;
     outline: none;
-    transition: border-bottom 0.3s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
   }
   
   input:hover{

@@ -3,15 +3,44 @@
       <header>
         <NavBar />
       </header>
-      <div class = "jumbotron">
-        <div class = "jumbotron-content">
+      <div id = "content-jumbotron" class = "jumbotron">
+        <div class = "jumbotron-content" style = "margin-left: 15.5%;">
             <h1 class="display-4">Start Unleashing your creativity</h1>
             <p class="lead">This is a simple example of a Bootstrap Jumbotron.</p>
             <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-            <a class="btn btn-primary btn-lg" href="#" role="button">Start Reading</a>
+            <a class="btn btn-primary btn-lg" role="button">Start Reading</a>
         </div>
+      </div>
+      <div id ="auth-jumbotron" class = "jumbotron">
+        <div id = "auth-jumbotron-content" class = "jumbotron-content">
+          <div class="card">
             
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div>
+                  <p class = "auth-message">
+                    Get Started!
+                  </p>
+                </div>
+                <div>
+                  <form>
+                    <div>
+                      <input type="email" id="email" name="email" placeholder = "Enter Email" autocomplete = "off" required>
+                    </div>
+                    <div>
+                      <input type="text" id="username" name="username" placeholder = "Enter username"  autocomplete = "off" required>
+                    </div>
+                    <div>
+                      <input type="password" id="password" name="password"  placeholder = "Enter password" autocomplete = "off" required>
+                    </div>
+                    <input type="submit" value="Sign Up">
+                  </form>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
 </template>
   
@@ -20,13 +49,14 @@
   export default {
     name: 'FrontPage',
     components: {
-      NavBar
-    }
+      NavBar,
+    },
   }
 </script>
   
 <style>
-  * {
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500&display=swap');
+  *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -35,18 +65,76 @@
     font-family: 'montserrat', sans-serif;
   }
   header {
-    width: 100vw;
+    width: 100%;
     background-color: rgb(179, 238, 248);
     padding: 10px;
     border: 20px;
-    border-bottom: 1px solid #494949;
+    border-bottom: 2px solid #494949;
   }
-  .jumbotron {
-    border-bottom: 1px solid #494949;
+  #content-jumbotron{
+    
+    margin-right:0px;
     background-color: rgb(179, 238, 248);
+    width: 70%;
+    float:left;
+    border-bottom: 2px solid #494949;
+    border-radius: 0;
   }
-  .jumbotron-content{
-    margin-right: 0%;
-    margin-left: 15.5%;
+
+  #auth-jumbotron{
+    background-color: rgb(235, 199, 134);
+    width: 30%;
+    height: 100vh;
+    float:right;
+    border-left: 2px solid #494949;
+    border-radius: 0;
+  }
+
+  #auth-jumbotron-content{
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .card{
+    width: 65%;
+    height: 70%;
+    border: 2px outset rgb(247, 166, 15);
+    border-radius: 0;
+    box-shadow: none;
+    justify-content: center;
+  }
+  li{
+    border:0;
+    box-shadow: 0;
+    justify-content: center;
+    text-align: center;
+  }
+  .list-group, .list-group-flush{
+    border:0;
+    box-shadow: 0;
+  }
+  p, h1, h2, h3{
+    font-family: 'Josefin Sans', sans-serif;
+  }
+
+  #email, #username, #password{
+    margin-bottom: 10px;
+    width: 80%;
+    padding: 10px;
+    font-size: 17px;
+    border: 2px solid rgb(245, 243, 239);
+    border-radius: 20px;
+    outline: none;
+    transition: border-bottom 0.3s ease-in-out;
+  }
+  
+  input:hover{
+    background-color: rgb(243, 208, 143);
+  }
+  .auth-message{
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 40px;
   }
 </style>

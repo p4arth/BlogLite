@@ -18,7 +18,7 @@ export default {
 }
 </script>
   
-<style>
+<style scoped>
 img {
     height: 30%;
     width: 30%

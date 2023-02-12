@@ -161,7 +161,7 @@
   }
 </script>
   
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500&display=swap');
   *{
     margin: 0;
@@ -172,7 +172,6 @@
     font-family: 'montserrat', sans-serif;
   }
   header {
-
     width: 100%;
     background-color: rgb(179, 238, 248);
     padding: 10px;

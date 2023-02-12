@@ -17,7 +17,7 @@
     </div>
 </template>
   
-<script>
+<script >
   export default {
     name: 'DropDown',
     props: ['title', 'items'],
@@ -27,12 +27,13 @@
       }
     }
   }
-  </script>
+</script>
   
-  <style>
+<style scoped>
   nav .menu-item svg {
     width: 10px;
     margin-left: 10px;
+    background: #000;
   }
   nav .menu-item .sub-menu {
     position: absolute;
@@ -43,9 +44,10 @@
     width: max-content;
     border-radius: 0px 0px 16px 16px;
   }
+
   .fade-enter-active,
   .fade-leave-active {
-    transition: all .5s ease-out;
+    transition: all .1s ease-out;
   }
   .fade-enter,
   .fade-leave-to {

@@ -23,14 +23,14 @@
                   </p>
                 </div>
                 <div>
-                  <form>
-                    <div>
+                  <form id = "auth-form" @submit.prevent = "submit" method = "POST">
+                    <div id = "email-div">
                       <input type="email" id="email" name="email" placeholder = "Enter Email" autocomplete = "off" required>
                     </div>
-                    <div>
+                    <div id = "username-div">
                       <input type="text" id="username" name="username" placeholder = "Enter username"  autocomplete = "off" required>
                     </div>
-                    <div>
+                    <div id = "password-div">
                       <input type="password" id="password" name="password"  placeholder = "Enter password" autocomplete = "off" required>
                     </div>
                     <input type="submit" value="Sign Up">
@@ -51,7 +51,9 @@
 </template>
   
 <script>
-import NavBar from './NavBar.vue';
+  import NavBar from './NavBar.vue';
+  import axios from 'axios';
+  import setAuthHeader from '../utils/setAuthHeader.js';
   export default {
     name: 'FrontPage',
     components: {
@@ -65,18 +67,97 @@ import NavBar from './NavBar.vue';
     },
     mounted(){
       const path = window.location.href;
-      // console.log(typeof path);
       if(path.includes("login")){
         if(this.message == "Get Started!"){
           this.message = "Welcome Back."
           this.path_url = "./signup"
           let element = document.getElementById("email");
-          console.log(element);
           element.remove();
-
         }
       }
     },
+    methods: {
+      submit: function(){
+        const currPath = window.location.href;
+        // Authenticats if the user is logging in.
+        if(currPath.includes("login")){
+          const loginPath = 'http://127.0.0.1:5000/api/login';
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const result = axios.post(loginPath,
+                       {name: username, password: password}, 
+                       {headers: {'Content-Type': 'application/json'}})
+                       .then((response) => response.data)
+                       .then((user) => {
+                        return [user.username, user.status, user.auth_token];
+                       });
+          const loginChanges = async () => {
+            const [username, status, token] = await result;
+            if(status === "Authenticated"){
+              localStorage.setItem("jwtToken", token);
+              setAuthHeader(token);
+              console.log("hereeeeeeeee");
+              const passwordDiv = document.getElementById("password-div");
+              const newP =  document.createElement("p");
+              newP.innerText = "Authenticated!";
+              passwordDiv.appendChild(newP);
+              window.location.href = `../${username}/homepage`;
+            }
+            else{
+                const loginDiv = document.getElementById("login-form-div");
+                const newP =  document.createElement("p");
+                newP.innerText = "Unable to Authenticate. Try again!";
+                loginDiv.appendChild(newP);
+            }
+          };
+          loginChanges();
+        }
+        // Authenticates if the user is signing up.
+        else{
+          const signupPath = 'http://127.0.0.1:5000/api/signup';
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const email = document.getElementById("email").value;
+          const signupResult = axios.post(signupPath,
+                       {name: username, password: password, email: email}, 
+                       {headers: {'Content-Type': 'application/json'}})
+                       .then((response) => response.data)
+                       .then((user) => {
+                        return [user.username, user.status];
+                       });
+          const signupChanges = async () => {
+            const [username, status] = await signupResult;
+            if(status === "New User Created"){
+              const passwordDiv = document.getElementById("password-div");
+              const newP =  document.createElement("p");
+              newP.innerText = "Registration Successfull. Redirecting...";
+              passwordDiv.appendChild(newP);
+              window.location.href = `../login`;
+            }
+            else if (status === "Username is already taken") {
+              const oldP =  document.getElementById("p-dup-username");
+              if(oldP){
+                oldP.remove();
+              }
+              const usernameDiv = document.getElementById("username-div");
+              const newP =  document.createElement("p");
+              newP.setAttribute("id", "p-dup-username");
+              newP.innerText = `Username: ${username} is already taken`;
+              usernameDiv.appendChild(newP);
+            }
+            else{
+                const loginDiv = document.getElementById("signup-form-div");
+                const newP =  document.createElement("p");
+                newP.innerText = `Trouble signing user up`;
+                loginDiv.appendChild(newP);
+            }
+            console.log(status);
+            console.log(username);
+          };
+          signupChanges();
+        }
+      }
+    }
   }
 </script>
   

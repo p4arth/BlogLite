@@ -28,12 +28,14 @@ def signup_page():
         json_data = request.get_json()
         username = json_data["name"]
         password = json_data["password"]
+        email = json_data["email"]
         if User.query.filter_by(username = username).first() is not None:
             return jsonify({"username": username, "status": "Username is already taken"})
         else:
             new_user = User(
                 _username = username,
                 _password = password,
+                email = email,
                 _followers = 0,
                 _posts = 0
             )

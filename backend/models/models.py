@@ -8,11 +8,13 @@ class User(db.Model):
     password = db.Column(db.String, nullable = False)
     follower_count = db.Column(db.Integer)
     post_count = db.Column(db.Integer)
-    def __init__(self, _username, _password, _followers = 0, _posts = 0):
+    email = db.Column(db.String)
+    def __init__(self, _username, _password, email, _followers = 0, _posts = 0):
         self.username = _username
         self.password = _password
         self.follower_count = _followers
         self.post_count = _posts
+        self.email = email
 
 class Post(db.Model):
     __tablename__ = 'post'
@@ -53,7 +55,7 @@ class Followers(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("username", "password", "follower_count", "post_count")
+        fields = ("username", "password", "follower_count", "post_count", "email")
 
 class PostSchema(ma.Schema):
     class Meta:

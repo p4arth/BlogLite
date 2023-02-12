@@ -35,7 +35,7 @@
 
 <script>
 import axios from 'axios';
-import setAuthHeader from '../utils/setAuthHeader.js';
+import setAuthHeader from '../../utils/setAuthHeader.js';
 export default{
     data(){
         return {

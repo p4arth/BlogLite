@@ -4,10 +4,16 @@
       <HomeNav />
     </header>
     <div id = "main-homepage" class = "container">
-      <div v-for="post in followerBlogs" :key="post.id">
-        <BlogCard :post="post"/>
+      <div class = "follower-blogs">
+        <div v-for="post in followerBlogs" :key="post.id">
+          <BlogCard :post="post"/>
+        </div>
+      </div>
+      <div>
+        Recommendation section
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -64,12 +70,15 @@ export default {
 </script>
 
 <style scoped>
+.follower-blogs{
+  float:left;
+}
 #main-homepage{
   background-color: rgb(255, 248, 248);
   margin-top: 2%;
   margin-left: 18%;
   margin-right: 0%;
-  /* display: flex; */
+  /* float: flex; */
   align-items: center;
   justify-content: center;
 }

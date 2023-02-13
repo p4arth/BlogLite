@@ -31,6 +31,7 @@ export default {
 
 <style scoped>
 .card{
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     width: 65%;
     border-radius: 0%;
     padding-bottom: 2%;

@@ -43,10 +43,10 @@ export default {
 </script>
   
 <style scoped>
+
 img {
     height: 30%;
     width: 25%;
-    /* padding-right: 100px; */
 }
 .search-bar{
     width: 70%;

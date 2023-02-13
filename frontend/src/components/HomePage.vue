@@ -3,15 +3,22 @@
     <header>
       <HomeNav />
     </header>
+    <div id = "main-homepage" class = "container">
+      <div v-for="post in followerBlogs" :key="post.id">
+        <BlogCard :post="post"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 // NEED TO DESTROY THE TOKEN WHEN A USER LOGS OUTTTTTTT.
 import HomeNav from "./HomeNav.vue";
+import BlogCard from "./BlogCard.vue"
 export default {
     components: {
       HomeNav,
+      BlogCard,
     },
     data() {
         return {
@@ -56,11 +63,21 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
+#main-homepage{
+  background-color: rgb(255, 248, 248);
+  margin-top: 2%;
+  margin-left: 18%;
+  margin-right: 0%;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+}
 header {
     width: 100%;
     background-color: rgb(243, 246, 247);
     padding: 10px;
+    padding-bottom: 0px;
     border: 20px;
     border-bottom: 2px solid #494949;
   }

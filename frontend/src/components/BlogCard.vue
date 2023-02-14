@@ -32,7 +32,7 @@ export default {
 <style scoped>
 .card{
     font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-    width: 65%;
+    /* width: 65%; */
     border-radius: 0%;
     padding-bottom: 2%;
     border: none;
@@ -61,8 +61,7 @@ export default {
     float: right;
     width: 112px;
     height: 112px;
-    margin-top: 2%;
-    margin-right: 10%;
+    margin-top: 1%;
     overflow-x: hidden;
     overflow-y: hidden;
     background-repeat: no-repeat;

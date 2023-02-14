@@ -5,12 +5,13 @@
     </header>
     <div id = "main-homepage" class = "container">
       <div class = "follower-blogs">
-        <div v-for="post in followerBlogs" :key="post.id">
+        <div id = "blog-container" v-for="post in followerBlogs" :key="post.id">
           <BlogCard :post="post"/>
         </div>
       </div>
-      <div>
-        Recommendation section
+      <div class = "div-reccom">
+        <div class = "div-recc-topics">Recommended Topics</div>
+        <div class = "div-recc-blogs">Recommended Blogs</div>
       </div>
     </div>
     
@@ -73,6 +74,10 @@ export default {
 .follower-blogs{
   float:left;
 }
+#blog-container{
+  width: 105%;
+  margin-right: 5%;
+}
 #main-homepage{
   background-color: rgb(255, 248, 248);
   margin-top: 2%;
@@ -90,4 +95,24 @@ header {
     border: 20px;
     border-bottom: 2px solid #494949;
   }
+
+.div-reccom{
+  /* position: fixed;
+  top: 0%;
+  right: 4%;
+  z-index: 999; */
+  float: right;
+  text-align: center;
+  justify-content: center;
+  margin-top: 2%;
+  width: 40%;
+}
+.div-recc-topics{
+  height: 50vh;
+  background-color: red;
+}
+.div-recc-blogs{
+  height: 50vh;
+  background-color: blue;
+}
 </style>

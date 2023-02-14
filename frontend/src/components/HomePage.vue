@@ -6,7 +6,7 @@
     <div id = "main-homepage" class = "container">
       <div class = "follower-blogs">
         <div id = "blog-container" v-for="post in followerBlogs" :key="post.id">
-          <BlogCard :post="post"/>
+          <BlogCard :post="post" :publisher="false"/>
         </div>
       </div>
       <div class = "div-reccom">
@@ -83,7 +83,6 @@ export default {
   margin-top: 2%;
   margin-left: 18%;
   margin-right: 0%;
-  /* float: flex; */
   align-items: center;
   justify-content: center;
 }
@@ -94,13 +93,9 @@ header {
     padding-bottom: 0px;
     border: 20px;
     border-bottom: 2px solid #494949;
-  }
+}
 
 .div-reccom{
-  /* position: fixed;
-  top: 0%;
-  right: 4%;
-  z-index: 999; */
   float: right;
   text-align: center;
   justify-content: center;

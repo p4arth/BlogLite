@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import HomePage from "../components/HomePage.vue";
-import MyBlogs from "../components/MyBlogs.vue";
+import MyBlogs from "../components/user_blogs/MyBlogs.vue";
 import FrontPage from "../components/FrontPage.vue"
 // import AuthViews from "../components/auth_comps/AuthViews.vue"
 // import App from "../App.vue";

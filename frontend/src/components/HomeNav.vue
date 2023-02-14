@@ -29,8 +29,8 @@ export default {
                     link: "./#"
                 },
                 {
-                    title: "Lists",
-                    link: "./#"
+                    title: "My Blogs",
+                    link: "./my-blogs"
                 },
                 {
                     title: "Stats",

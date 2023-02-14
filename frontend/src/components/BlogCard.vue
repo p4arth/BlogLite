@@ -6,7 +6,8 @@
                 IMG
             </div>
             <div class="dot"></div>
-            <div class = "author-name">{{ post.username }}</div>
+            <div v-if="!publisher" class = "author-name">{{ post.username }}</div>
+            <div v-else class = "author-name">You</div>
             <div class="dot"></div>
             <div class = "published-date">{{ post.timestamp }}</div>
         </div>
@@ -25,7 +26,7 @@
 <script>
 export default {
     name: "BlogCard",
-    props: ["post"],
+    props: ["post", "publisher"],
 }
 </script>
 

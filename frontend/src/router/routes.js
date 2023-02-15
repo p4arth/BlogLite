@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomePage from "../components/HomePage.vue";
 import MyBlogs from "../components/user_blogs/MyBlogs.vue";
 import FrontPage from "../components/FrontPage.vue"
+import UserProfile from "../components/UserProfile.vue";
 // import AuthViews from "../components/auth_comps/AuthViews.vue"
 // import App from "../App.vue";
 // import base from "../components/navbar.vue";
@@ -30,6 +31,11 @@ export default new VueRouter({
             path: "/:username/my-blogs",
             name: "MyBlogs",
             component: MyBlogs,
+        },
+        {
+            path: "/:username/profile",
+            name: "Profile",
+            component: UserProfile,
         },
         {
             path: "/",

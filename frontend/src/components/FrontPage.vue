@@ -95,6 +95,7 @@
             const [username, status, token] = await result;
             if(status === "Authenticated"){
               localStorage.setItem("jwtToken", token);
+              localStorage.setItem("currUser", username);
               setAuthHeader(token);
               console.log("hereeeeeeeee");
               const passwordDiv = document.getElementById("password-div");

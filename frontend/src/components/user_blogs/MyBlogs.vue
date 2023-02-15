@@ -9,15 +9,24 @@
                         margin-top: 5%;
                         margin-bottom: 2%;
                         border-bottom: 1px solid black;">
-                <h2><b>Your Stories</b></h2>
+                <h2>
+                  <b v-if="!isProfile">Your Stories</b>
+                  <b v-else >{{ user }}</b>
+                </h2>
             </div>
             <div id = "blog-container" v-for="post in followerPosts" :key="post.id">
                 <BlogCard :post="post" :publisher="true"/>
             </div>
         </div>
         <div class = "div-reccom">
-            <div class = "div-recc-topics">Recommended Topics</div>
-            <div class = "div-recc-blogs">Recommended Blogs</div>
+            <!-- <div v-if="!isProfile" class = "div-recc-topics">Recommended Topics</div>
+            <div v-else class = "div-recc-topics">
+              
+            </div>
+            <div v-if="!isProfile" class = "div-recc-blogs">Recommended Blogs</div>
+            <div v-else class = "div-recc-topics">
+            </div> -->
+            <slot></slot>
         </div>
     </div>
 </div>
@@ -31,6 +40,7 @@ export default {
         HomeNav,
         BlogCard
     },
+    props: ["user", "isProfile"],
     data() {
         return {
             followerPosts: [],
@@ -39,23 +49,38 @@ export default {
     },
     created(){
       // Get details about the current user.
-      const userPath = `http://127.0.0.1:5000/api/${this.$route.params.username}`;
-      fetch(userPath, {
-        headers: {"Authorization": localStorage.jwtToken}
-      })
-      .then(reponse => reponse.json())
-      .then(data => this.current_user = data);
+      if(this.user !== ""){
+        const userPath = `http://127.0.0.1:5000/api/${this.$route.params.username}`;
+        fetch(userPath, {
+          headers: {"Authorization": localStorage.jwtToken}
+        })
+        .then(reponse => reponse.json())
+        .then(data => this.current_user = data);
+      }
     },
     mounted() {
       // Used to get blogs by the current user.
-      const path1 = `http://127.0.0.1:5000/api/${this.$route.params.username}/my-blogs`;
-      fetch(path1, {
-        headers: {"Authorization": localStorage.jwtToken}
-      })
-      .then(response => response.json())
-      .then(data => {
-        this.followerPosts = data
-      });
+      if(this.user === localStorage.username){
+        const path1 = `http://127.0.0.1:5000/api/${this.$route.params.username}/my-blogs`;
+        fetch(path1, {
+          headers: {"Authorization": localStorage.jwtToken}
+        })
+        .then(response => response.json())
+        .then(data => {
+          this.followerPosts = data
+        });
+      }
+      // Get blogs of the other user if user != current user.
+      else{
+        const path1 = `http://127.0.0.1:5000/api/blogs/${this.user}`;
+        fetch(path1, {
+          headers: {"Authorization": localStorage.jwtToken}
+        })
+        .then(response => response.json())
+        .then(data => {
+          this.followerPosts = data
+        });
+      }
     },
 }
 </script>
@@ -87,17 +112,18 @@ header {
 }
 .div-reccom{
   float: right;
-  text-align: center;
+  height: 100vh;
   justify-content: center;
-  margin-top: 2%;
+  /* margin-top: 2%; */
   width: 40%;
+  border-left: 1px solid black;
 }
-.div-recc-topics{
+/* .div-recc-topics{
   height: 50vh;
   background-color: red;
 }
 .div-recc-blogs{
   height: 50vh;
   background-color: blue;
-}
+} */
 </style>

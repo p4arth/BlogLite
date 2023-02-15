@@ -26,7 +26,7 @@ export default {
             dropdownItems: [
                 {
                     title: "Profile",
-                    link: "./#"
+                    link: "./profile"
                 },
                 {
                     title: "My Blogs",
@@ -34,7 +34,7 @@ export default {
                 },
                 {
                     title: "Stats",
-                    link: "./#"
+                    link: "./profile"
                 }
             ]
         }

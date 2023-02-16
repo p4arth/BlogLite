@@ -131,3 +131,10 @@ def my_blogs_redir(username):
     posts = db.session.query(Post).filter((Post.username == username)).all()
     return posts_schema.dump(posts)
 
+@app.route("/api/blogs/<username>")
+@cross_origin(origin = '*', headers = ['Content-type'])
+def user_blogs(username):
+    posts_schema = PostSchema(many=True)
+    posts = db.session.query(Post).filter((Post.username == username)).all()
+    return posts_schema.dump(posts) 
+

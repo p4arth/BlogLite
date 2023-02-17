@@ -61,9 +61,9 @@ class PostSchema(ma.Schema):
     class Meta:
         fields = ("id", "title", "caption", "username", "image_url", "timestamp")
 
-# class FollowersSchema(ma.Schema):
-#     class Meta:
-#         fields = ("username", "password", "follower_count", "post_count")
+class FollowersSchema(ma.Schema):
+    class Meta:
+        fields = ("username", "follows")
 
 # user_schema = UserSchema()
 # users_schema = UserSchema(many=True)

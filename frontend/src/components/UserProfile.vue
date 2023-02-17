@@ -2,40 +2,48 @@
 <div>
     <MyBlogs :user="`${this.user}`" :isProfile="true" >
         <div class = "profile-section">
-            <img class = "profile-picture" 
-                 src = "https://avatars.githubusercontent.com/u/75850838?s=400&u=7741546969ab6771831f3484d81e1272399d642c&v=4">        </div>
+            <img v-if="user_details.pfp_link !== 'nan'" 
+                 class = "profile-picture" 
+                 :src = "`${user_details.pfp_link}`">
+            <img v-else 
+                 class = "profile-picture" 
+                 src = "../assets/blankpropic.png">   
             <div class = "profile-username">
                 <h4><b>Paarth Bhatnagar</b></h4>
             </div>
             <div class = "profile-caption">
                 <small>
-                    Hey! I am Paarth, currently majoring in data science and biology.
-                    I like to write about topics that intrigue me.
+                    {{ user_details.biotext }}
                 </small>
             </div>
             <div class = "profile-follow">
                 <!-- Following Modal Button -->
                 <b-button id = "follower-modal-button" 
                           v-b-modal.modal-followers>
-                    <small style = "font-weight: bold;">30 Followers</small>
+                    <small style = "font-weight: bold;">{{ user_details.followers_count }} Followers</small>
                 </b-button>
 
                 <!-- Follower Modal Button -->
                 <b-button id = "following-modal-button" 
                           v-b-modal.modal-following>
-                    <small style = "font-weight: bold;">30 Following</small>
+                    <small style = "font-weight: bold;">{{ user_details.following_count }} Following</small>
                 </b-button>
             </div>
+        </div>
     </MyBlogs>
     <!-- Modals -->
     <div>
         <!-- Following Modal -->
         <b-modal id="modal-followers" title="BootstrapVue">
-            <p class="my-4">Hello from followers</p>
+            <div v-for="follower in user_details.followers" :key="follower.username">
+                <p>{{ follower.username }}</p>
+            </div>
         </b-modal>
         <!-- Followers Modal -->
         <b-modal id="modal-following" title="BootstrapVue">
-            <p class="my-4">Hello from following</p>
+            <div v-for="following in user_details.following" :key="following.follows">
+                <p>{{ following.follows }}</p>
+            </div>
         </b-modal>
     </div>
 </div>
@@ -50,11 +58,32 @@ export default{
     },
     data() {
         return {
-            user: ""
+            user: "",
+            user_details: "",
+            is_curr: false,
         }
     },
     created(){
         this.user = this.$route.params.username;
+    },
+    mounted(){
+        if(localStorage.currUser === this.user){
+            this.is_curr = true;
+            const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
+            fetch(profPath, {
+                headers: {"Authorization": localStorage.jwtToken}
+            })
+            .then(reponse => reponse.json())
+            .then(data => this.user_details = data);
+        }
+        else{
+            const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
+            fetch(profPath, {
+                headers: {"Authorization": localStorage.jwtToken}
+            })
+            .then(reponse => reponse.json())
+            .then(data => this.user_details = data);
+        }
     }
 }
 
@@ -115,7 +144,6 @@ export default{
 #follower-modal-button:hover, #following-modal-button:hover{
     color: rgb(20, 20, 20);
 }
-
 
 
 

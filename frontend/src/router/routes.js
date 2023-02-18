@@ -4,9 +4,7 @@ import HomePage from "../components/HomePage.vue";
 import MyBlogs from "../components/user_blogs/MyBlogs.vue";
 import FrontPage from "../components/FrontPage.vue"
 import UserProfile from "../components/UserProfile.vue";
-// import AuthViews from "../components/auth_comps/AuthViews.vue"
-// import App from "../App.vue";
-// import base from "../components/navbar.vue";
+import PublishArea from "../components/PublishArea.vue";
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -41,6 +39,11 @@ export default new VueRouter({
             path: "/",
             name: "LandingPage",
             component: FrontPage
+        },
+        {
+            path: "/:username/publish",
+            name: "Publish",
+            component: PublishArea
         }
     ],
 })

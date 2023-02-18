@@ -1,4 +1,4 @@
 // const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  vue: 'Vue',
-})
+// module.exports = defineConfig({
+//   vue: 'Vue',
+// })

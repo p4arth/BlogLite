@@ -6,7 +6,7 @@
       </div>
       <div class = "menu-container">
         <!-- <div class="menu-item"><a href="#">About</a></div> -->
-        <div class="menu-item"><a href="#">Publish</a></div>
+        <div class="menu-item"><a href="./publish">Publish</a></div>
         <div class="menu-item"><a href="#">Notifications</a></div>
         <!-- <div id = "corner-item" class="menu-item"><a href="#">ProPic</a></div> -->
         <DropDown :title="`ProPic`" :items="dropdownItems" />

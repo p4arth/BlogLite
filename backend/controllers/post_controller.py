@@ -3,46 +3,52 @@ from models.models import *
 from app import app, token_required
 from flask import render_template
 from flask import request
-from flask import redirect
+from flask import redirect, jsonify
 from sqlalchemy import exc
 from flask_cors import cross_origin
+from models.models import PostSchema
 
-@app.route("/<username>/publish_new_article", methods = ["GET", "POST"])
+@app.route("/api/<username>/publish_new_article", methods = ["POST"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
 def publish_post(username):
-    mode = "publish"
-    if request.method == "POST":
-        now = datetime.now()
-        dt_string = now.strftime(f"%d/%m/%Y %H:%M:%S")
-        article_title = request.form.get("article-title")
-        article_caption = request.form.get("article-caption")
-        image_url = request.form.get("blog-image")
-        if not(article_title) or not(article_caption):
-            return render_template("error.html", message = "The title or the caption cannot be empty!")
-        try:
-            user = db.session.query(User).filter(User.username == username).first()
-            posts = db.session.query(Post).filter(Post.username == username).all()
-            new_post = Post(
-                title_ = article_title,
-                caption_ = article_caption,
-                username_ = username,
-                image_url_ = image_url,
-                timestamp_ = dt_string
-            )
-            db.session.add(new_post)
-            user.post_count = len(list(posts)) + 1
-            db.session.add(user)
-            db.session.commit()
-        except exc.IntegrityError:
-            return render_template("error.html", message = "An article with this title already exists.")
-        except:
-            return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-        return redirect(f"/{username}/view/post_id={new_post.id}")
-    else:
-        return render_template("new_blog.html",
-                                mode = mode,
-                                username = username, 
-                                default_text_title = "", 
-                                defualt_text_caption = "",)
+    now = datetime.now()
+    json_data = request.get_json()
+    dt_string = now.strftime(f"%d/%m/%Y %H:%M:%S")
+    article_title = json_data["title"]
+    article_caption = json_data["caption"]
+    image_url = json_data["image-link"]
+    post_schema = PostSchema()
+    if not(article_title) or not(article_caption):
+        return jsonify({
+                "auth": "failed",
+                "message":  "The title or the caption cannot be empty!"
+            })
+    try:
+        user = db.session.query(User).filter(User.username == username).first()
+        posts = db.session.query(Post).filter(Post.username == username).all()
+        new_post = Post(
+            title_ = article_title,
+            caption_ = article_caption,
+            username_ = username,
+            image_url_ = image_url,
+            timestamp_ = dt_string
+        )
+        db.session.add(new_post)
+        user.post_count = len(list(posts)) + 1
+        db.session.add(user)
+        db.session.commit()
+    except exc.IntegrityError:
+        return jsonify({
+            "auth": "failed",
+            "message": "An article with this title already exists."
+        })
+    except:
+        return jsonify({
+            "auth": "failed",
+            "message": "Some error occoured."
+        })
+    return post_schema.dump(new_post)
 
 def get_post(username, writer_name = None, post_id = None):
     if writer_name is None:

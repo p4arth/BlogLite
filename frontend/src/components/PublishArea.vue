@@ -2,12 +2,11 @@
 <div>
     <div class = "container">
         <div class = "publish-bar">
-            <div style = "float: right;
-                          padding-left: 1%;">
+            <div style = "float: right;padding-left: 1%;">
                 DropDown
             </div>
             <div style = "float:right;padding-left: 1%;">   
-                <button>
+                <button @click="publish">
                     Publish
                 </button>
             </div>
@@ -15,6 +14,7 @@
         </div>
         <textarea id = "title" placeholder="Title"></textarea>
         <textarea id = "content" placeholder="Write Something..."></textarea>
+        <textarea id = "image" placeholder="Enter image url"></textarea>
     </div>
 </div>
 </template>
@@ -36,7 +36,7 @@ export default {
 
         const contentArea = document.getElementById('content');
         contentArea.addEventListener('input', function() {
-            console.log(this.scrollHeight);
+            // console.log(this.scrollHeight);
             if(this.scrollHeight !== 40){
                 this.style.height = 'auto';
                 this.style.height = this.scrollHeight + 'px';
@@ -45,6 +45,32 @@ export default {
                 this.style.height = "40px";
             }
         });
+    },
+    methods: {
+        publish: function() {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+            const image = document.getElementById("image").value;
+            const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/publish_new_article`;
+            fetch(path, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.jwtToken
+                },
+                body: JSON.stringify({
+                    'title': title,
+                    'caption': content,
+                    'image-link': image,
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log(response.json());
+                } else {
+                    throw new Error('API respone was not OK');
+                }
+            })
+        }
     }
 
 }
@@ -60,6 +86,7 @@ button {
   border: none;
   border-radius: 20px;
   padding: 10px 20px;
+  margin-bottom: 10px;
   font-size: 14px;
 }
 

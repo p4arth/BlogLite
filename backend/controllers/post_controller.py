@@ -112,22 +112,33 @@ def edit_article(username, writer_name = None, post_id = None):
             return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
         return redirect(f"/{username}/homepage")
 
-@app.route("/<username>/delete/post_id=<int:post_id>")
-def delete_article(username, writer_name = None, post_id = None):
-    if request.method  == "GET":
-        try:
-            post = get_post(
-                username = username,
-                writer_name = writer_name,
-                post_id = post_id
-            )
-            db.session.delete(post)
-            db.session.commit()
-        except exc.IntegrityError:
-            return render_template("error.html", message = "Unable to delete article! Contact support.")
-        except:
-            return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-        return redirect(f"/{username}/my-blogs")
+@app.route("/api/<username>/delete_post", methods = ["DELETE"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def delete_article(username):
+    json_data = request.get_json()
+    post_id = json_data["post_id"]
+    try:
+        post = get_post(
+            username = username,
+            writer_name = username,
+            post_id = post_id
+        )
+        db.session.delete(post)
+        db.session.commit()
+    except exc.IntegrityError:
+        return jsonify({
+            "auth": "failed",
+            "message": "Unable to delete article!"
+        })
+    except:
+        return jsonify({
+            "auth": "failed",
+            "message": "Some error occoured."
+        })
+    return jsonify({
+        "auth": "sucess"
+    })
 
 @app.route("/api/<username>/my-blogs")
 @cross_origin(origin = '*', headers = ['Content-type'])

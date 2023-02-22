@@ -12,7 +12,8 @@
             </div>
             
         </div>
-        <textarea id = "title" placeholder="Title"></textarea>
+        <textarea v-if="!isEditMode" id = "title" placeholder="Title"></textarea>
+        <textarea v-else id = "title" placeholder="Title" v-model="post.title"></textarea>
         <textarea id = "content" placeholder="Write Something..."></textarea>
         <textarea id = "image" placeholder="Enter image url"></textarea>
     </div>
@@ -22,6 +23,12 @@
 <script>
 export default {
     name: "PublishArea",
+    props: ["isEditMode", "postObj"],
+    data() {
+        return {
+            post: this.postObj
+        };
+    },
     mounted() {
         const textArea = document.getElementById('title');
         textArea.addEventListener('input', function() {
@@ -33,10 +40,8 @@ export default {
                 this.style.height = "54px";
             }
         });
-
         const contentArea = document.getElementById('content');
         contentArea.addEventListener('input', function() {
-            // console.log(this.scrollHeight);
             if(this.scrollHeight !== 40){
                 this.style.height = 'auto';
                 this.style.height = this.scrollHeight + 'px';

@@ -15,7 +15,7 @@
                 </h2>
             </div>
             <div id = "blog-container" v-for="post in followerPosts" :key="post.id">
-                <BlogCard :post="post" :publisher="true" @post-deletion="location.reload()"/>
+                <BlogCard :post="post" :publisher="true" @post-deletion="handle_deletion"/>
             </div>
         </div>
         <div class = "div-reccom">
@@ -82,6 +82,11 @@ export default {
         });
       }
     },
+    methods: {
+      handle_deletion: function() {
+        location.reload();
+      }
+    }
 }
 </script>
 

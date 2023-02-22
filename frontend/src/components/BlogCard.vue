@@ -12,12 +12,11 @@
             <div class = "published-date">{{ post.timestamp }}</div>
             <div v-if="publisher">
                 <b-dropdown text=":"  variant = "none" size = "sm">
-                    <b-dropdown-item href="#">Edit</b-dropdown-item>
+                    <b-dropdown-item :href="`./edit/post/${post.id}`">Edit</b-dropdown-item>
                     <b-dropdown-item @click="delete_article">Delete</b-dropdown-item>
                 </b-dropdown>
             </div>
         </div>
-        
         <div class = "blog-body">
             <div class = "main-title"><h4><b>{{ post.title }}</b></h4>
             </div>
@@ -50,9 +49,12 @@ export default {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                this.$emit('post-deletion');
+                return response.json();
             })
-        }
+            .then(data => {
+                console.log(data);
+            })
+        },
     }
 }
 </script>

@@ -62,6 +62,7 @@ def get_post(username, writer_name = None, post_id = None):
 @app.route("/<username>/view/post_id=<int:post_id>")
 @app.route("/<username>/view/writer_name=<writer_name>&post_id=<int:post_id>")
 @app.route("/<username>/profile/view/writer_name=<writer_name>&post_id=<int:post_id>")
+@cross_origin(origin = '*', headers = ['Content-type'])
 def preview_article(username, writer_name = None, post_id = None):
     if request.method  == "GET":
         post = get_post(
@@ -75,42 +76,43 @@ def preview_article(username, writer_name = None, post_id = None):
                                  post = post,
                                  display_img_flag = display_img_flag)
 
-@app.route("/<username>/edit/post_id=<int:post_id>", methods = ["GET", "POST"])
-def edit_article(username, writer_name = None, post_id = None):
-    mode = "edit"
-    post = get_post(
-            username = username,
-            writer_name = writer_name,
-            post_id = post_id
-        )
-    if request.method  == "GET":
-        return render_template("new_blog.html",
-                                mode = mode,
-                                username = username,
-                                post_id = post.id,
-                                default_text_title = post.title, 
-                                defualt_text_caption = post.caption)
-    elif request.method == "POST":
-        now = datetime.now()
-        dt_string = now.strftime(f"%d/%m/%Y %H:%M:%S")
-        edited_article_title = request.form.get("article-title")
-        edited_article_caption = request.form.get("article-caption")
-        if not(edited_article_title) or not(edited_article_caption):
-            return render_template("error.html", message = "The title or the caption cannot be empty!")
-        try:
-            post.title = edited_article_title
-            post.caption = edited_article_caption
-            post.timestamp = dt_string
-            blog_img = request.form.get("blog-image")
-            if blog_img:
-                post.image_url = request.form.get("blog-image")
-            db.session.add(post)
-            db.session.commit()
-        except exc.IntegrityError:
-            return render_template("error.html", message = "An article with this title already exists.")
-        except:
-            return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-        return redirect(f"/{username}/homepage")
+@app.route("/api/<username>/edit/post", methods = ["PUT"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def edit_article(username):
+    now = datetime.now()
+    json_data = request.get_json()
+    dt_string = now.strftime(f"%d/%m/%Y %H:%M:%S")
+    post_id = json_data.get("post_id")
+    article_title = json_data.get("title", "")
+    article_caption = json_data.get("caption", "")
+    image_url = json_data.get("image_link", "")
+    post_schema = PostSchema()
+    post = db.session.query(Post).filter((Post.username == username) & (Post.id == post_id)).first()
+    if not(article_title) or not(article_caption):
+        return jsonify({
+            "auth": "Failed",
+            "message": "The title or the caption cannot be empty!"
+        })
+    try:
+        post.title = article_title
+        post.caption = article_caption
+        post.timestamp = dt_string
+        if image_url != "":
+            post.image_url = image_url
+        db.session.add(post)
+        db.session.commit()
+    except exc.IntegrityError:
+        return jsonify({
+            "auth": "Failed",
+            "message": "Same article already exists."
+        })
+    except:
+        return jsonify({
+            "auth": "Failed",
+            "message": "Error"
+        })
+    return post_schema.dump(post)
 
 @app.route("/api/<username>/delete_post", methods = ["DELETE"])
 @cross_origin(origin = '*', headers = ['Content-type'])
@@ -147,6 +149,13 @@ def my_blogs_redir(username):
     posts_schema = PostSchema(many=True)
     posts = db.session.query(Post).filter((Post.username == username)).all()
     return posts_schema.dump(posts)
+
+@app.route("/api/get/post/<post_id>")
+@cross_origin(origin = '*', headers = ['Content-type'])
+def get_post_api(post_id):
+    post_schema = PostSchema()
+    post = db.session.query(Post).filter((Post.id == post_id)).first()
+    return post_schema.dump(post)
 
 @app.route("/api/blogs/<username>")
 @cross_origin(origin = '*', headers = ['Content-type'])

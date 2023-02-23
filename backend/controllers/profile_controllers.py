@@ -12,7 +12,6 @@ import pandas as pd
 @app.route("/api/<username>/my-profile", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def render_my_profile(username):
-    # profile_blogs = db.session.query(Post).filter((Post.username == username)).all()
     follow_schema = FollowersSchema(many = True)
     followers_of_profile = db.session.query(Followers).filter(Followers.follows == username).all()
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
@@ -40,17 +39,6 @@ def render_my_profile(username):
     #         user_csv.loc[user_index[0],"user_profile_pic_link"] = newPictureLink
     #     user_csv.to_csv("./instance/metadata.csv", index = False)
     #     return redirect(f"/{username}/my-profile")
-
-    # else:
-    #     return render_template("user_profile.html",
-    #                             username = username,
-    #                             default_bio_text = bio_text,
-    #                             default_profile_picture = profile_picture,
-    #                             profile_blogs = profile_blogs,
-    #                             follower_count = follower_count,
-    #                             following_count = following_count,
-    #                             followers_info = followers_of_profile, 
-    #                             following_info = user_followers)
 
 @app.route("/<current_user>/profile/<profile_username>", methods = ["GET", "POST"])
 def render_user_profile(current_user, profile_username):

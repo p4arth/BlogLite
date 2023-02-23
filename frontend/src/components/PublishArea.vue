@@ -6,16 +6,25 @@
                 DropDown
             </div>
             <div style = "float:right;padding-left: 1%;">   
-                <button @click="publish">
-                    Publish
-                </button>
+                <button v-if="!isEditMode" @click="publish">Publish</button>
+                <button v-else @click="edit">Publish</button>
             </div>
             
         </div>
         <textarea v-if="!isEditMode" id = "title" placeholder="Title"></textarea>
         <textarea v-else id = "title" placeholder="Title" v-model="post.title"></textarea>
-        <textarea id = "content" placeholder="Write Something..."></textarea>
-        <textarea id = "image" placeholder="Enter image url"></textarea>
+        <textarea v-if="!isEditMode" id = "content" placeholder="Write Something..."></textarea>
+        <textarea v-else 
+                  id = "content" 
+                  placeholder="Write Something..."
+                  v-model="post.caption">
+                </textarea>
+        <textarea v-if="!isEditMode" id = "image" placeholder="Enter image url"></textarea>
+        <textarea v-else 
+                  id = "image" 
+                  placeholder="Enter image url"
+                  v-model="post.image_url">
+                </textarea>
     </div>
 </div>
 </template>
@@ -23,13 +32,36 @@
 <script>
 export default {
     name: "PublishArea",
-    props: ["isEditMode", "postObj"],
+    props: ["isEditMode"],
     data() {
         return {
-            post: this.postObj
+            post: "",
         };
     },
+    created(){
+        if(this.isEditMode){
+            const path = `http://127.0.0.1:5000/api/get/post/${this.$route.params.post_id}`;
+            const response = fetch(path, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            const postData = async () => {
+                this.post = await response;
+                console.log(this.post);
+            }
+            postData();
+            
+        }
+    },
     mounted() {
+        console.log(this.post);
         const textArea = document.getElementById('title');
         textArea.addEventListener('input', function() {
             if(this.scrollHeight !== 54){
@@ -49,6 +81,7 @@ export default {
             if(contentArea.value.trim() === ""){
                 this.style.height = "40px";
             }
+
         });
     },
     methods: {
@@ -64,6 +97,31 @@ export default {
                     'Authorization': localStorage.jwtToken
                 },
                 body: JSON.stringify({
+                    'title': title,
+                    'caption': content,
+                    'image-link': image,
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log(response.json());
+                } else {
+                    throw new Error('API respone was not OK');
+                }
+            })
+        },
+        edit: function(){
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+            const image = document.getElementById("image").value;
+            const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/edit/post`;
+            fetch(path, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.jwtToken
+                },
+                body: JSON.stringify({
+                    'post_id': this.post.id,
                     'title': title,
                     'caption': content,
                     'image-link': image,

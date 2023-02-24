@@ -6,6 +6,7 @@ import FrontPage from "../components/FrontPage.vue"
 import UserProfile from "../components/UserProfile.vue";
 import PublishArea from "../components/PublishArea.vue";
 import EditBlog from "../components/EditBlog.vue";
+import BlogView from "../components/BlogView.vue";
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -50,6 +51,11 @@ export default new VueRouter({
             path: "/:username/edit/post/:post_id",
             name: "EditBlog",
             component: EditBlog
-        }
+        },
+        {
+            path: "/:username/blog/:post_id",
+            name: "BlogView",
+            component: BlogView,
+        },
     ],
 })

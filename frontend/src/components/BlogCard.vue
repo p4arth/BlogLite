@@ -18,8 +18,15 @@
             </div>
         </div>
         <div class = "blog-body">
-            <div class = "main-title"><h4><b>{{ post.title }}</b></h4>
-            </div>
+                <div class = "main-title">
+                    <h4><b>
+                        <a style="color:inherit;
+                                  text-decoration: none;" 
+                           :href="`../${this.post.username}/blog/${this.post.id}`">
+                            {{ post.title }}
+                        </a>
+                    </b></h4>
+                </div>
             <div class = "preview-content">
                 <p>{{ post.caption.slice(0, 200) }}...</p>
             </div>

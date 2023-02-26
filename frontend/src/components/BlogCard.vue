@@ -29,7 +29,7 @@
                 </div>
             <div class = "preview-content">
                 <p>{{ post.caption.slice(0, 200) }}...</p>
-            </div>
+        </div>
         </div>
         <div class = "blog-image" :style="`background-image: url(${post.image_url})`"></div>
         

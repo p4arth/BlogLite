@@ -20,14 +20,25 @@
                 <!-- Following Modal Button -->
                 <b-button id = "follower-modal-button" 
                           v-b-modal.modal-followers>
-                    <small style = "font-weight: bold;">{{ user_details.followers_count }} Followers</small>
+                    <small id="count-followers" 
+                           style = "font-weight: bold;"
+                           >
+                           {{ followers_count }} Followers
+                    </small>
                 </b-button>
 
                 <!-- Follower Modal Button -->
                 <b-button id = "following-modal-button" 
                           v-b-modal.modal-following>
-                    <small style = "font-weight: bold;">{{ user_details.following_count }} Following</small>
+                    <small style = "font-weight: bold;">
+                        {{ user_details.following_count }} Following
+                    </small>
                 </b-button>
+            </div>
+            <div id="follow-button-div" style="float:left;">
+                <button id="follow-button-prof"
+                        class="follow-button"
+                        @click="followClick">Follow</button>
             </div>
         </div>
     </MyBlogs>
@@ -61,6 +72,7 @@ export default{
             user: "",
             user_details: "",
             is_curr: false,
+            followers_count: "",
         }
     },
     created(){
@@ -74,7 +86,8 @@ export default{
                 headers: {"Authorization": localStorage.jwtToken}
             })
             .then(reponse => reponse.json())
-            .then(data => this.user_details = data);
+            .then(data => this.user_details = data)
+            .then(data => this.followers_count = data.followers_count);
         }
         else{
             const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
@@ -82,7 +95,23 @@ export default{
                 headers: {"Authorization": localStorage.jwtToken}
             })
             .then(reponse => reponse.json())
-            .then(data => this.user_details = data);
+            .then(data => this.user_details = data)
+            .then(data => this.followers_count = data.followers_count);
+            // If this is not the users profile I need to get the data about
+            // The people this user user is following and need to update accordigly.
+        }
+    },
+    methods: {
+        followClick: function(){
+            const followButton = document.getElementById("follow-button-prof");
+            if(followButton.innerHTML === "Follow"){
+                followButton.innerHTML = "Following";
+                this.followers_count = this.followers_count + 1;
+            }
+            else{
+                followButton.innerHTML = "Follow";
+                this.followers_count = this.followers_count - 1;
+            }
         }
     }
 }
@@ -112,6 +141,24 @@ export default{
     margin-left: 5%;
     width: 250px;
 }
+
+.follow-button {
+  background-color: green;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+#follow-button-div{
+    margin-left: 5%;
+}
+
 .profile-follow{
     float: left;
     /* margin-top: 1%; */

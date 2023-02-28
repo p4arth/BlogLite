@@ -35,10 +35,13 @@
                     </small>
                 </b-button>
             </div>
-            <div id="follow-button-div" style="float:left;">
-                <button id="follow-button-prof"
+            <div v-if="!is_curr" id="follow-button-div" style="float:left;">
+                <button v-if="!isFollowing" id="follow-button-prof"
                         class="follow-button"
                         @click="followClick">Follow</button>
+                <button v-else id="follow-button-prof"
+                        class="follow-button"
+                        @click="followClick">Following</button>
             </div>
         </div>
     </MyBlogs>
@@ -73,43 +76,106 @@ export default{
             user_details: "",
             is_curr: false,
             followers_count: "",
+            isFollowing: false,
+            follow_button_value: "Follow",
         }
     },
     created(){
         this.user = this.$route.params.username;
     },
     mounted(){
-        if(localStorage.currUser === this.user){
-            this.is_curr = true;
-            const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
-            fetch(profPath, {
-                headers: {"Authorization": localStorage.jwtToken}
-            })
-            .then(reponse => reponse.json())
-            .then(data => this.user_details = data)
-            .then(data => this.followers_count = data.followers_count);
-        }
-        else{
-            const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
-            fetch(profPath, {
-                headers: {"Authorization": localStorage.jwtToken}
-            })
-            .then(reponse => reponse.json())
-            .then(data => this.user_details = data)
-            .then(data => this.followers_count = data.followers_count);
-            // If this is not the users profile I need to get the data about
-            // The people this user user is following and need to update accordigly.
-        }
+        this.getProfileData();
+        this.getUserFollowers();
     },
     methods: {
-        followClick: function(){
+        getProfileData: function(){
+            if(localStorage.currUser === this.user){
+                this.is_curr = true;
+                const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
+                fetch(profPath, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": localStorage.jwtToken
+                    }
+                })
+                .then(reponse => reponse.json())
+                .then(data => this.user_details = data)
+                .then(data => this.followers_count = data.followers_count);
+            }
+            else{
+                const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
+                fetch(profPath, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": localStorage.jwtToken
+                    }
+                })
+                .then(reponse => reponse.json())
+                .then(data => this.user_details = data)
+                .then(data => this.followers_count = data.followers_count);
+                // If this is not the users profile I need to get the data about
+                // The people this user user is following and need to update accordigly.
+            }
+        },
+        getUserFollowers: function(){
+            const path = `http://127.0.0.1:5000/api/get/${localStorage.currUser}/follows/${this.user}`;
+            fetch(path, 
+            {   
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(reponse => reponse.json())
+            .then(data => this.user_details = data)
+            .then((data) => {
+                this.isFollowing = data.following;
+            });
+        },
+        followClick: async function(){
             const followButton = document.getElementById("follow-button-prof");
             if(followButton.innerHTML === "Follow"){
-                followButton.innerHTML = "Following";
+                const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/follow`
+                await fetch(path, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "Authorization": localStorage.jwtToken,
+                            },
+                            body: JSON.stringify({"has_to_follow": this.user})
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log(data);
+                            })
+                this.isFollowing = true;
                 this.followers_count = this.followers_count + 1;
             }
             else{
-                followButton.innerHTML = "Follow";
+                const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/follow`
+                await fetch(path, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "Authorization": localStorage.jwtToken,
+                            },
+                            body: JSON.stringify({"has_to_unfollow": this.user})
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log(data);
+                            })
+                this.isFollowing = false;
                 this.followers_count = this.followers_count - 1;
             }
         }

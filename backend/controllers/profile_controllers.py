@@ -1,6 +1,5 @@
-from datetime import datetime
 from models.models import *
-from app import app
+from app import app, token_required
 from flask import render_template
 from flask import request
 from flask_cors import cross_origin
@@ -14,6 +13,8 @@ import pandas as pd
 def render_my_profile(username):
     follow_schema = FollowersSchema(many = True)
     followers_of_profile = db.session.query(Followers).filter(Followers.follows == username).all()
+    print("----------------------")
+    print(followers_of_profile)
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
     follower_count = len(followers_of_profile)
     following_count = len(user_followers)
@@ -39,6 +40,46 @@ def render_my_profile(username):
     #         user_csv.loc[user_index[0],"user_profile_pic_link"] = newPictureLink
     #     user_csv.to_csv("./instance/metadata.csv", index = False)
     #     return redirect(f"/{username}/my-profile")
+
+@app.route("/api/get/<username>/follows/<other_user>", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+def get_user_followers(username, other_user):
+    isFollowing = db.session.query(Followers).filter(
+        (Followers.username == username) & (Followers.follows == other_user)
+    ).first()
+    print(isFollowing)
+    return jsonify({
+        "following": True if isFollowing else False,
+    })
+
+@app.route("/api/<username>/follow", methods = ["POST", "DELETE"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def follow_func(username):
+    data = request.get_json()
+    if request.method == "POST":
+        has_to_follow = data["has_to_follow"]
+        follow_obj = Followers(
+            username_= username,
+            follows_= has_to_follow
+        )
+        db.session.add(follow_obj)
+        db.session.commit()
+        return jsonify({
+            'auth': "success"
+        })
+    elif request.method == "DELETE":
+        has_to_unfollow = data["has_to_unfollow"]
+        follower_Obj = db.session.query(Followers).filter(
+            (Followers.username == username) & (Followers.follows == has_to_unfollow)
+        ).first()
+        db.session.delete(follower_Obj)
+        db.session.commit()
+        return jsonify({
+            'auth': "DELETED"
+        })
+    
+
 
 @app.route("/<current_user>/profile/<profile_username>", methods = ["GET", "POST"])
 def render_user_profile(current_user, profile_username):

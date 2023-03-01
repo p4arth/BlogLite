@@ -13,8 +13,6 @@ import pandas as pd
 def render_my_profile(username):
     follow_schema = FollowersSchema(many = True)
     followers_of_profile = db.session.query(Followers).filter(Followers.follows == username).all()
-    print("----------------------")
-    print(followers_of_profile)
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
     follower_count = len(followers_of_profile)
     following_count = len(user_followers)
@@ -47,7 +45,6 @@ def get_user_followers(username, other_user):
     isFollowing = db.session.query(Followers).filter(
         (Followers.username == username) & (Followers.follows == other_user)
     ).first()
-    print(isFollowing)
     return jsonify({
         "following": True if isFollowing else False,
     })

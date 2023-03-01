@@ -35,9 +35,11 @@ def token_required(f):
             return jsonify({'message' : 'Token is missing!'}), 401
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms = ['HS256'])
+            if kwargs["username"] != data["username"]:
+                return jsonify({'message' : 'Invalid User!'}), 404
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
-        return f(data["username"])
+        return f(*args, **kwargs)
     return decorated
 
 

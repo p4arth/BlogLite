@@ -10,8 +10,11 @@
       <img src = "../assets/dropdown_png.png">
       <transition name="fade" appear>
         <div class="sub-menu" v-if="isOpen">
-          <div v-for="(item, i) in items" :key="i" class="menu-item"  id = "sub-menu-items">
+          <div v-for="(item, i) in items" :key="i" class="menu-item" id = "sub-menu-items">
             <a :href="item.link">{{ item.title }}</a>
+          </div>
+          <div class="menu-item" id="logout">
+            <a @click="logout" href="/">Log Out</a>
           </div>
         </div>
       </transition>
@@ -25,6 +28,12 @@
     data () {
       return {
         isOpen: false
+      }
+    },
+    methods: {
+      logout: function(){
+        localStorage.removeItem('currUser');
+        localStorage.removeItem('jwtToken');
       }
     }
   }

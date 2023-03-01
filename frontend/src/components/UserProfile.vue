@@ -113,8 +113,6 @@ export default{
                 .then(reponse => reponse.json())
                 .then(data => this.user_details = data)
                 .then(data => this.followers_count = data.followers_count);
-                // If this is not the users profile I need to get the data about
-                // The people this user user is following and need to update accordigly.
             }
         },
         getUserFollowers: function(){

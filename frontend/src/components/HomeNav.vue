@@ -35,7 +35,7 @@ export default {
                 {
                     title: "Stats",
                     link: "./profile"
-                }
+                },
             ]
         }
     }

@@ -11,7 +11,7 @@
             <a class="btn btn-primary btn-lg" role="button">Start Reading</a>
         </div>
       </div>
-      <div id ="auth-jumbotron" class = "jumbotron">
+      <!-- <div id ="auth-jumbotron" class = "jumbotron">
         <div id = "auth-jumbotron-content" class = "jumbotron-content">
           <div class="card">
             
@@ -46,7 +46,7 @@
             </ul>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 </template>
   
@@ -56,6 +56,7 @@
   import setAuthHeader from '../utils/setAuthHeader.js';
   export default {
     name: 'FrontPage',
+    inheritAttrs: false,
     components: {
       NavBar,
     },

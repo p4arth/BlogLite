@@ -17,29 +17,43 @@
             </p>
         </div>
         <!-- MAIN AUTHENTICATION MODALS -->
-        <b-modal id="modal-login" centered>
+        <b-modal id="modal-login"
+                 lazy="true"
+                 size="md"
+                 centered :transition="'fade'"
+                 modal-class="custom-modal-class"
+                 content-class="custom-content-class text-center" 
+                 header-class="custom-header-class">
             <div class="text-center mb-4">
                 <h5 id="auth-modal-title" class="modal-title">Welcome Back!</h5>
             </div>
             <form id="auth-form" @submit.prevent="submitLogin" >
+                <!-- Enter your Email -->
                 <div id="username-div">
+                    
                     <input type="text" 
-                           id="username" 
-                           name="username" 
-                           placeholder="Enter username" 
-                           autocomplete="off" required v-model="username" />
+                        id="username" 
+                        name="username" 
+                        placeholder="Enter username" 
+                        autocomplete="off" required v-model="username" />
                 </div>
                 <div id="password-div">
-                    <input id="password" 
-                           name="password" 
-                           placeholder="Enter password" 
-                           autocomplete="off" required v-model="password" />
+                    <input id="password" type="password"
+                        name="password"
+                        placeholder="Enter password" 
+                        autocomplete="off" required v-model="password" />
                 </div>
-                <input type="submit" value="Log In" />
+                <input id="login-button" type="submit" value="Log In" />
             </form>
         </b-modal>
         <!-- SIGNUP MODAL -->
-        <b-modal id="modal-signup" centered>
+        <b-modal id="modal-signup" 
+                 lazy="true"
+                 size="md"
+                 centered :transition="'fade'"
+                 modal-class="custom-modal-class"
+                 content-class="custom-content-class text-center" 
+                 header-class="custom-header-class">
                 <div class="text-center mb-4">
                     <h5 id = "auth-modal-title" class="modal-title">Get Started with BlogLite</h5>
                 </div>
@@ -64,7 +78,7 @@
                              placeholder = "Enter password" 
                              autocomplete = "off" required />
                     </div>
-                    <input type="submit" value="Sign Up" />
+                    <input id="signup-button" type="submit" value="Sign Up" />
                 </form>
         </b-modal>
       </div>
@@ -174,7 +188,7 @@ export default {
 }
 </script>
   
-<style scoped>
+<style >
 img {
     height: 30%;
     width: 30%
@@ -236,9 +250,24 @@ nav .menu-item a {
 #signup-modal-click{
     margin: 0px;
 }
+.custom-content-class{
+    background-color: rgb(248, 243, 243);
+    padding:0;
+}
+.custom-content-class .modal-body{
+    justify-content: center !important;
+    align-items: center !important;
+}
+.custom-header-class{
+    padding:0;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
 #modal-login{
     border: none !important;
     justify-content: center;
+
 }
 .modal-header{
     border: none;
@@ -246,20 +275,35 @@ nav .menu-item a {
 .modal-footer{
   display: none !important;
 }
-
+input{
+    text-align: center;
+}
 #email, #username, #password{
-    margin-bottom: 10px;
-    width: 80%;
-    padding: 10px;
+    margin-bottom: 5%;
+    outline:none;
+    width: 70%;
+    padding: 0px;
     font-size: 17px;
-    border: 2px solid rgb(245, 243, 239);
-    border-radius: 20px;
-    outline: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 2px solid rgb(168, 168, 167);
+    transition: border-bottom 0.2s ease-in-out;
+
+  }
+  #email:focus, #username:focus, #password:focus{
+    border-bottom: 2px solid rgb(7, 7, 6);
+  }
+  #login-button, #signup-button{
+    background-color: rgb(252, 252, 252);
+    width: 15%;
+    height: 50%;
+    border: 1px solid grey;
+    border-radius: 10px;
     transition: background-color 0.2s ease-in-out;
   }
-  
-  input:hover{
-    background-color: rgb(243, 208, 143);
+  #login-button:hover, #signup-button:hover{
+    background-color: rgb(184, 181, 181);
   }
   .auth-message{
     font-family: 'Josefin Sans', sans-serif;

@@ -5,11 +5,11 @@
         <input class = "search-bar" type="text" placeholder="Search..">
       </div>
       <div class = "menu-container">
-        <!-- <div class="menu-item"><a href="#">About</a></div> -->
         <div class="menu-item"><a href="./publish">Publish</a></div>
         <div class="menu-item"><a href="#">Notifications</a></div>
+        <img id="home-nav-img" :src = "pfp_link">
         <!-- <div id = "corner-item" class="menu-item"><a href="#">ProPic</a></div> -->
-        <DropDown :title="`ProPic`" :items="dropdownItems" />
+        <DropDown  :items="dropdownItems" />
       </div>
     </nav>
 </template>
@@ -36,17 +36,46 @@ export default {
                     title: "Stats",
                     link: "./profile"
                 },
-            ]
+            ],
+            pfp_link: "",
         }
-    }
+    },
+    mounted(){
+      const path = `http://127.0.0.1:5000/api/get/profile_picture/${localStorage.currUser}`
+      fetch(path, {
+            methods: "GET",
+            headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': localStorage.jwtToken,
+                },
+            }
+        )
+        .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+        })
+        .then(
+          data => {
+            this.pfp_link = data.link;
+          }
+        )
+    },
 }
 </script>
   
 <style scoped>
-
 img {
     height: 30%;
     width: 25%;
+}
+#home-nav-img{
+    width: 35px;
+    height: 35px;
+    border-radius: 30px;
+    margin-top: 5px;
+    margin-bottom: 15px;
 }
 .search-bar{
     width: 70%;
@@ -54,8 +83,8 @@ img {
     margin-left:20px;
     height: 40px;
     outline: none;
+    text-align: left;
 }
-
 .menu-item-logo {
     margin-right: 0px;
     height:50%;

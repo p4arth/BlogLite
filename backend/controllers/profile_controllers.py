@@ -149,4 +149,13 @@ def search_user_and_render_search_page(username):
                                 search_results = search_query)
 
 
-
+@app.route("/api/get/profile_picture/<username>", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def get_user_profile(username):
+    user_csv = pd.read_csv("./instance/metadata.csv")
+    user_csv_sub = user_csv[user_csv.username == username]
+    profile_picture = str(user_csv_sub["user_profile_pic_link"].iloc[0])
+    return jsonify({
+        "link": profile_picture,
+    })

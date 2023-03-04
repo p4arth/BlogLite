@@ -1,4 +1,5 @@
 <template>
+<div class = "nav-land">
     <nav>
       <div class = "menu-item-logo">
         <img src = "../assets/bl_logo.png">
@@ -82,11 +83,13 @@
                 </form>
         </b-modal>
       </div>
+    
       <div>
         
       </div>
       
     </nav>
+</div>
 </template>
   
 <script>
@@ -188,12 +191,17 @@ export default {
 }
 </script>
   
-<style >
+<style>
 img {
     height: 30%;
     width: 30%
 }
-.menu-item-logo {
+.nav-land nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.navland nav .menu-item-logo {
     margin-right: 0px;
     color: black;
     padding: 0px 0px;
@@ -213,11 +221,7 @@ img {
   border-bottom: 0px;
 }
 
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 nav .menu-item {
     color: black;
     padding: 10px 30px;

@@ -19,7 +19,6 @@
 </template>
 
 <script>
-// NEED TO DESTROY THE TOKEN WHEN A USER LOGS OUTTTTTTT.
 import HomeNav from "./HomeNav.vue";
 import BlogCard from "./BlogCard.vue"
 export default {

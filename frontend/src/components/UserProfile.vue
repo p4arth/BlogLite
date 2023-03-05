@@ -91,7 +91,7 @@ export default{
         getProfileData: function(){
             if(localStorage.currUser === this.user){
                 this.is_curr = true;
-                const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
+                const profPath = `http://127.0.0.1:5000/api/${localStorage.currUser}/my-profile`;
                 fetch(profPath, {
                     headers: {
                         'Content-Type': 'application/json',

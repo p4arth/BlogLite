@@ -8,7 +8,6 @@
         <div class="menu-item"><a href="./publish">Publish</a></div>
         <div class="menu-item"><a href="#">Notifications</a></div>
         <img id="home-nav-img" :src = "pfp_link">
-        <!-- <div id = "corner-item" class="menu-item"><a href="#">ProPic</a></div> -->
         <DropDown  :items="dropdownItems" />
       </div>
     </nav>
@@ -26,7 +25,7 @@ export default {
             dropdownItems: [
                 {
                     title: "Profile",
-                    link: "./profile"
+                    link: `http://127.0.0.1:8080/${localStorage.currUser}/profile`
                 },
                 {
                     title: "My Blogs",

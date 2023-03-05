@@ -1,6 +1,9 @@
 <template>
-<div class="container">
-    <div v-if="flag === ''">
+<div>
+    <header>
+      <HomeNav />
+    </header>
+    <div v-if="flag === ''" class="main-blogpage">
         <div id="title">
             <h1>
                 {{ post.title }}
@@ -11,15 +14,19 @@
         </div>
         <div id="content" v-html="post.caption"></div>
     </div>
-    <div v-else>
+    <div class="main-blogpage" v-else>
         {{ this.flag }}
     </div>
 </div>
 </template>
 
 <script>
+import HomeNav from "./HomeNav.vue";
 export default{
     name: "BlogView",
+    components: {
+      HomeNav,
+    },
     data() {
         return {
             post: "",
@@ -52,5 +59,23 @@ export default{
 </script>
 
 <style scoped>
-
+header {
+    width: 100%;
+    background-color: rgb(243, 246, 247);
+    padding: 10px;
+    padding-bottom: 0px;
+    border: 20px;
+    border-bottom: 2px solid #494949;
+}
+.main-blogpage{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 248, 248);
+}
+#content{
+    margin-right: 600px;
+    margin-left: 600px;
+}
 </style>

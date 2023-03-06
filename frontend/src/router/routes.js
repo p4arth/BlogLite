@@ -7,6 +7,7 @@ import UserProfile from "../components/UserProfile.vue";
 import PublishArea from "../components/PublishArea.vue";
 import EditBlog from "../components/EditBlog.vue";
 import BlogView from "../components/BlogView.vue";
+import SearchResults from "../components/SearchResults.vue";
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -56,6 +57,12 @@ export default new VueRouter({
             path: "/:username/blog/:post_id",
             name: "BlogView",
             component: BlogView,
+        },
+        {
+            path: "/search",
+            name: "SearchResults",
+            component: SearchResults,
+            props: (route) => ({ query: route.query.q })
         },
     ],
 })

@@ -2,7 +2,11 @@
     <nav>
       <div class = "menu-item-logo">
         <img src = "../assets/bl_logo.png">
-        <input class = "search-bar" type="text" placeholder="Search..">
+        <form @submit.prevent="search">
+            <input id="search-query"
+                   class = "search-bar" 
+                   type="text" placeholder="Search.." autocomplete="none">
+        </form>
       </div>
       <div class = "menu-container">
         <div class="menu-item"><a href="./publish">Publish</a></div>
@@ -61,6 +65,16 @@ export default {
           }
         )
     },
+    methods: {
+        search: function(){
+            const searchTerm = document.getElementById("search-query").value;
+            let currUrl =  `http://127.0.0.1:8080/search/`
+            let queryString = "?q=" + encodeURIComponent(searchTerm);
+            let fUrl = currUrl + queryString;
+            window.location.href = fUrl;
+            
+        }
+    }
 }
 </script>
   

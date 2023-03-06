@@ -3,7 +3,7 @@ from models.models import *
 from app import app, token_required
 from flask import render_template
 from flask import request
-from flask import redirect, jsonify
+from flask import jsonify
 from sqlalchemy import exc
 from flask_cors import cross_origin
 from models.models import PostSchema

@@ -2,9 +2,7 @@ from models.models import *
 from models.models import Post, db, UserSchema, PostSchema
 from app import app, token_required
 from flask import request, jsonify
-# from flask import redirect
 import jwt
-from functools import wraps
 import random
 import pandas as pd
 from flask_cors import cross_origin
@@ -111,3 +109,13 @@ def user_feed_data(username):
     return post_objs_list, user_blogs
 
 
+@app.route("/api/search/", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+# @token_required
+def get_search_results():
+    query = "%" + request.args.get('q') + "%"
+    search_users = User.query.filter(User.username.like(query)).all()
+    users_schema = UserSchema(many=True)
+    return jsonify({
+        "results": users_schema.dump(search_users)
+    })

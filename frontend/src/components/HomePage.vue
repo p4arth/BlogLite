@@ -44,8 +44,6 @@ export default {
     },
     mounted() {
       // Used if user has followers.
-      console.log(this.current_user);
-      console.log(this.current_user);
       const path1 = `http://127.0.0.1:5000/api/${this.$route.params.username}/homepage`;
       fetch(path1, {
         headers: {"Authorization": localStorage.jwtToken}

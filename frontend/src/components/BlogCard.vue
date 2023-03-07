@@ -14,6 +14,7 @@
                 <b-dropdown text=":"  variant = "none" size = "sm">
                     <b-dropdown-item :href="`./edit/post/${post.id}`">Edit</b-dropdown-item>
                     <b-dropdown-item @click="delete_article">Delete</b-dropdown-item>
+                    <b-dropdown-item @click="exportBlog" id="export-blog-button">Export</b-dropdown-item>
                 </b-dropdown>
             </div>
         </div>
@@ -21,7 +22,7 @@
                 <div class = "main-title">
                     <h4><b>
                         <a style="color:inherit;
-                                  text-decoration: none;" 
+                                  text-decoration: none;"
                            :href="`../${this.post.username}/blog/${this.post.id}`">
                             {{ post.title }}
                         </a>
@@ -61,6 +62,34 @@ export default {
             .then(data => {
                 console.log(data);
             })
+        },
+        exportBlog: async function(){
+            let path = `http://127.0.0.1:5000/api/get/blog/`
+            let queryString = "?post_id=" + encodeURIComponent(this.post.id);
+            let fUrl = path + queryString;
+            await fetch(fUrl, {
+                methods: "GET",
+                headers: {
+                    'Authorization': localStorage.jwtToken,
+                },
+            })
+            .then(response => response.blob())
+            .then(blob => this.convertBlobCsv(blob));
+        },
+        convertBlobCsv: function(blob){
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const csvString = event.target.result;
+                const csvBlob = new Blob([csvString], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(csvBlob);
+                const link = document.createElement('a');
+                const fileName = `blog_${this.post.id}.csv`
+                link.href = url;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+            };
+            reader.readAsText(blob);
         },
     }
 }

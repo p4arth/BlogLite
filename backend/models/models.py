@@ -6,15 +6,21 @@ class User(db.Model):
     __tablename__ = 'user'
     username = db.Column(db.String, primary_key = True, nullable = False)
     password = db.Column(db.String, nullable = False)
+    email = db.Column(db.String, nullable = False)
     follower_count = db.Column(db.Integer)
     post_count = db.Column(db.Integer)
-    email = db.Column(db.String)
-    def __init__(self, _username, _password, email, _followers = 0, _posts = 0):
+    pfp_link = db.Column(db.String)
+    biotext = db.Column(db.String)
+    
+    def __init__(self, _username, _password, email, _followers = 0,
+                  _posts = 0, pfp_link = None, biotext = None):
         self.username = _username
         self.password = _password
         self.follower_count = _followers
         self.post_count = _posts
         self.email = email
+        self.pfp_link  = pfp_link
+        self.biotext = biotext
 
 class Post(db.Model):
     __tablename__ = 'post'
@@ -55,7 +61,7 @@ class Followers(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("username", "password", "follower_count", "post_count", "email")
+        fields = ("username", "password", "follower_count", "post_count", "email", "pfp_link", "biotext")
 
 class PostSchema(ma.Schema):
     class Meta:

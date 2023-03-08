@@ -11,22 +11,19 @@ import pandas as pd
 @app.route("/api/<username>/my-profile", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def render_my_profile(username):
+    user = db.session.query(User).filter(User.username == username).first()
     follow_schema = FollowersSchema(many = True)
     followers_of_profile = db.session.query(Followers).filter(Followers.follows == username).all()
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
     follower_count = len(followers_of_profile)
     following_count = len(user_followers)
-    user_csv = pd.read_csv("./instance/metadata.csv")
-    user_csv_sub = user_csv[user_csv.username == username]
-    bio_text = str(user_csv_sub["user_bio_text"].iloc[0])
-    profile_picture = str(user_csv_sub["user_profile_pic_link"].iloc[0])
     return jsonify({
         "followers_count": follower_count,
         "following_count": following_count,
         "followers": follow_schema.dump(followers_of_profile),
         "following": follow_schema.dump(user_followers),
-        "biotext": bio_text,
-        "pfp_link": profile_picture
+        "biotext": user.biotext,
+        "pfp_link": user.pfp_link,
     })
     # if request.method == "POST":
     #     newBioText = request.form.get("newBioText")
@@ -151,11 +148,9 @@ def search_user_and_render_search_page(username):
 
 @app.route("/api/get/profile_picture/<username>", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
-@token_required
+# @token_required
 def get_user_profile(username):
-    user_csv = pd.read_csv("./instance/metadata.csv")
-    user_csv_sub = user_csv[user_csv.username == username]
-    profile_picture = str(user_csv_sub["user_profile_pic_link"].iloc[0])
+    user = db.session.query(User).filter(User.username == username).first()
     return jsonify({
-        "link": profile_picture,
+        "link": user.pfp_link,
     })

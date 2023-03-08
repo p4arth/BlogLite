@@ -29,12 +29,15 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
+        print("-----------------------------")
+        print(request)
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
         if not token:
             return jsonify({'message' : 'Token is missing!'}), 401
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms = ['HS256'])
+            print(data)
             if kwargs["username"] != data["username"]:
                 return jsonify({'message' : 'Invalid User!'}), 404
         except:

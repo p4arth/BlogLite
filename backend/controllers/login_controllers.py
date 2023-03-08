@@ -18,7 +18,7 @@ def verify_login(username = None, password = None):
                 return True
             return False
 
-# @app.route("/", methods = ["POST"])
+
 @app.route("/api/signup", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def signup_page():
@@ -94,6 +94,8 @@ def display_user_homepage(username):
 def get_user_details(username):
     user_schema = UserSchema()
     user = db.session.query(User).filter((User.username == username)).first()
+    print("-"*50)
+    print(user)
     return user_schema.dump(user)
 
 def user_feed_data(username):

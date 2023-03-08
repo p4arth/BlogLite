@@ -100,9 +100,10 @@ export default{
                 })
                 .then(reponse => reponse.json())
                 .then(data => this.user_details = data)
-                .then(data => this.followers_count = data.followers_count);
+                .then(data => this.followers_count = data.followers_count).then(data => console.log(data));
             }
             else{
+                console.log()
                 const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
                 fetch(profPath, {
                     headers: {

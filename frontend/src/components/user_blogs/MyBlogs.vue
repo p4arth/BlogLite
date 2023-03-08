@@ -50,7 +50,7 @@ export default {
     created(){
       // Get details about the current user.
       if(this.user !== ""){
-        const userPath = `http://127.0.0.1:5000/api/${this.$route.params.username}`;
+        const userPath = `http://127.0.0.1:5000/api/${localStorage.currUser}`;
         fetch(userPath, {
           headers: {"Authorization": localStorage.jwtToken}
         })
@@ -61,6 +61,7 @@ export default {
     mounted() {
       // Used to get blogs by the current user.
       if(this.user === localStorage.username){
+        console.log("REQUESTTT FROM HERE 1")
         const path1 = `http://127.0.0.1:5000/api/${this.$route.params.username}/my-blogs`;
         fetch(path1, {
           headers: {"Authorization": localStorage.jwtToken}
@@ -73,6 +74,7 @@ export default {
       // Get blogs of the other user if user != current user.
       else{
         const path1 = `http://127.0.0.1:5000/api/blogs/${this.user}`;
+        console.log("REQUESTTT FROM HERE 2")
         fetch(path1, {
           headers: {"Authorization": localStorage.jwtToken}
         })

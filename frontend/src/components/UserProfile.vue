@@ -81,20 +81,19 @@ export default{
         }
     },
     created(){
-        this.user = this.$route.params.username;
+        this.user = this.$route.params.username;  
+    },
+    mounted(){
         this.getProfileData();
         this.getUserFollowers();
     },
-    // mounted(){
-    //     
-    // },
     methods: {
-        getProfileData: function(){
+        getProfileData: async function(){
             if(localStorage.currUser === this.user){
                 console.log("PROFILE CURR");
                 this.is_curr = true;
                 const profPath = `http://127.0.0.1:5000/api/${localStorage.currUser}/my-profile`;
-                fetch(profPath, {
+                await fetch(profPath, {
                     headers: {
                         'Content-Type': 'application/json',
                         "Authorization": localStorage.jwtToken
@@ -107,14 +106,14 @@ export default{
             else{
                 console.log("PROFILE NOT CURR");
                 const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
-                fetch(profPath, {
+                await fetch(profPath, {
                     headers: {
                         'Content-Type': 'application/json',
                         "Authorization": localStorage.jwtToken
                     }
                 })
                 .then(reponse => reponse.json())
-                .then(data => this.user_details = data).then(data => console.log(data))
+                .then(data => this.user_details = data)
                 .then(data => this.followers_count = data.followers_count)
             }
         },
@@ -128,7 +127,7 @@ export default{
                 }
             })
             .then(reponse => reponse.json())
-            .then(data => this.user_details = data)
+            // .then(data => this.user_details = data)
             .then((data) => {
                 this.isFollowing = data.following;
             });

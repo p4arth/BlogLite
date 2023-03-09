@@ -17,7 +17,10 @@ def render_my_profile(username):
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
     follower_count = len(followers_of_profile)
     following_count = len(user_followers)
+    # print("-"*50)
+    # print(user.pfp_link)
     return jsonify({
+        "full_name": user.full_name,
         "followers_count": follower_count,
         "following_count": following_count,
         "followers": follow_schema.dump(followers_of_profile),

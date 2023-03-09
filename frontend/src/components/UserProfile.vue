@@ -2,14 +2,14 @@
 <div>
     <MyBlogs :user="`${this.user}`" :isProfile="true" >
         <div class = "profile-section">
-            <img v-if="user_details.pfp_link !== 'nan'" 
+            <img v-if="user_details.pfp_link"
                  class = "profile-picture" 
                  :src = "`${user_details.pfp_link}`">
             <img v-else 
                  class = "profile-picture" 
                  src = "../assets/blankpropic.png">   
             <div class = "profile-username">
-                <h4><b>Paarth Bhatnagar</b></h4>
+                <h4><b>{{ user_details.full_name }}</b></h4>
             </div>
             <div class = "profile-caption">
                 <small>
@@ -82,14 +82,16 @@ export default{
     },
     created(){
         this.user = this.$route.params.username;
-    },
-    mounted(){
         this.getProfileData();
         this.getUserFollowers();
     },
+    // mounted(){
+    //     
+    // },
     methods: {
         getProfileData: function(){
             if(localStorage.currUser === this.user){
+                console.log("PROFILE CURR");
                 this.is_curr = true;
                 const profPath = `http://127.0.0.1:5000/api/${localStorage.currUser}/my-profile`;
                 fetch(profPath, {
@@ -100,10 +102,10 @@ export default{
                 })
                 .then(reponse => reponse.json())
                 .then(data => this.user_details = data)
-                .then(data => this.followers_count = data.followers_count).then(data => console.log(data));
+                .then(data => this.followers_count = data.followers_count)
             }
             else{
-                console.log()
+                console.log("PROFILE NOT CURR");
                 const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
                 fetch(profPath, {
                     headers: {
@@ -112,8 +114,8 @@ export default{
                     }
                 })
                 .then(reponse => reponse.json())
-                .then(data => this.user_details = data)
-                .then(data => this.followers_count = data.followers_count);
+                .then(data => this.user_details = data).then(data => console.log(data))
+                .then(data => this.followers_count = data.followers_count)
             }
         },
         getUserFollowers: function(){

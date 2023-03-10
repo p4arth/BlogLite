@@ -1,15 +1,17 @@
 <template>
 <div>
+    <header>    
+        <HomeNav />
+    </header>
     <div class = "container">
         <div class = "publish-bar">
-            <div style = "float: right;padding-left: 1%;">
-                DropDown
+            <div style = "float:right;padding-left: 1%;">
+                <button id="publish-button" 
+                        v-if="!isEditMode" 
+                        @click="publish">Publish</button>
+                <button id="publish-button" 
+                        v-else @click="edit">Publish</button>
             </div>
-            <div style = "float:right;padding-left: 1%;">   
-                <button v-if="!isEditMode" @click="publish">Publish</button>
-                <button v-else @click="edit">Publish</button>
-            </div>
-            
         </div>
         <textarea v-if="!isEditMode" id = "title" placeholder="Title"></textarea>
         <textarea v-else id = "title" placeholder="Title" v-model="post.title"></textarea>
@@ -30,9 +32,13 @@
 </template>
 
 <script>
+import HomeNav from "./HomeNav.vue";
 export default {
     name: "PublishArea",
     props: ["isEditMode"],
+    components: {
+        HomeNav,
+    },
     data() {
         return {
             post: "",
@@ -140,10 +146,19 @@ export default {
 </script>
 
 <style scoped>
+header {
+    width: 100%;
+    background-color: rgb(243, 246, 247);
+    padding: 10px;
+    padding-bottom: 0px;
+    border: 20px;
+    border-bottom: 2px solid #494949;
+}
 .container{
     margin-top: 0.5%;
 }
-button {
+
+#publish-button{
   background-color: green;
   color: white;
   border: none;
@@ -151,12 +166,12 @@ button {
   padding: 10px 20px;
   margin-bottom: 10px;
   font-size: 14px;
+  transition: background-color 0.2s ease-out;
+}
+#publish-button:hover{
+    background-color: rgb(2, 82, 2);
 }
 
-
-/* .publish-bar{
-    float:right;
-} */
 #title{
     resize: none;
     overflow: hidden;

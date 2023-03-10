@@ -2,15 +2,30 @@
     <nav>
       <div class = "menu-item-logo">
         <img src = "../assets/bl_logo.png">
-        <form @submit.prevent="search">
+        <form @submit.prevent="search" style="float:left;">
+            <b-icon id="search-nav"
+                    icon="search" 
+                    scale="1.2"
+                    style="margin-left:10px">
+                </b-icon>
             <input id="search-query"
                    class = "search-bar" 
                    type="text" placeholder="Search.." autocomplete="none">
         </form>
       </div>
       <div class = "menu-container">
-        <div class="menu-item"><a href="./publish">Publish</a></div>
-        <div class="menu-item"><a href="#">Notifications</a></div>
+        <div  class="menu-item" style="padding-right:1%">
+            <a href="./publish">
+                <b-icon id="publish-nav" icon="pencil-square" scale="1.6">
+                </b-icon>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="#">
+                <b-icon id="notif-nav" icon="bell" scale="1.6">
+                </b-icon>
+            </a>
+        </div>
         <img id="home-nav-img" :src = "pfp_link">
         <DropDown  :items="dropdownItems" />
       </div>
@@ -80,6 +95,8 @@ export default {
   
 <style scoped>
 img {
+    float:left;
+    margin-top:8px;
     height: 30%;
     width: 25%;
 }
@@ -93,7 +110,7 @@ img {
 .search-bar{
     width: 70%;
     border: none;
-    margin-left:20px;
+    margin-left:10px;
     height: 40px;
     outline: none;
     text-align: left;
@@ -134,6 +151,13 @@ nav .menu-item a {
     color: inherit;
     text-decoration: none;
 }
+#publish-nav, #notif-nav, #search-nav{
+    color:rgb(97, 97, 97);
+}
+#publish-nav:hover, #notif-nav:hover{
+    color:rgb(0, 0, 0);
+}
+
 #corner-item{
     margin-right: 20%;
     background-color: rgb(239, 242, 243);

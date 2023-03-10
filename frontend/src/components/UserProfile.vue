@@ -127,7 +127,6 @@ export default{
                 }
             })
             .then(reponse => reponse.json())
-            // .then(data => this.user_details = data)
             .then((data) => {
                 this.isFollowing = data.following;
             });

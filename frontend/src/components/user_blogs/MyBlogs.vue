@@ -121,7 +121,6 @@ header {
   float: right;
   height: 100vh;
   justify-content: center;
-  /* margin-top: 2%; */
   width: 40%;
   border-left: 1px solid black;
 }

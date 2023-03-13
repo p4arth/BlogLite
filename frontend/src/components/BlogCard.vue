@@ -3,13 +3,16 @@
     <div class="container" style="padding:0">
         <div class = "author-information">
             <div class = "author-profile-picture">
-                IMG
+                <img id="profile-pic" v-if="pfp_link" :src="pfp_link">
+                <img id="profile-pic" v-else src="../assets/blankpropic.png">
             </div>
             <div class="dot"></div>
             <div v-if="!publisher" class = "author-name">{{ post.username }}</div>
             <div v-else class = "author-name">You</div>
             <div class="dot"></div>
-            <div class = "published-date">{{ post.timestamp }}</div>
+            <div class = "published-date" >
+                {{ post.timestamp }}
+            </div>
             <div v-if="publisher">
                 <b-dropdown text=":"  variant = "none" size = "sm">
                     <b-dropdown-item :href="`./edit/post/${post.id}`">Edit</b-dropdown-item>
@@ -41,7 +44,24 @@
 export default {
     name: "BlogCard",
     props: ["post", "publisher"],
+    data() {
+        return {
+            "pfp_link": "",
+        }
+    },
+    mounted(){
+        this.get_user_picture();
+    },
     methods: {
+        get_user_picture: async function(){
+            const path = `http://127.0.0.1:5000//api/get/profile_picture/${this.post.username}`;
+            await fetch(path, {
+                methods: "GET",
+            })
+            .then(response => response.json())
+            .then(data => this.pfp_link = data.link);
+
+        },
         delete_article: function(){
             const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/delete_post`;
             const post_id = this.post.id;
@@ -105,15 +125,23 @@ export default {
 .author-information{
     display: flex;
     margin-top: 2%;
+    align-items: center;
+    /* justify-content: center; */
 }
 .blog-manager{
     float: right;
 }
-.author-name, .published-date{
-    margin-left: 0%;
+.published-date{
+    margin-top: 3px;
 }
 .blog-body{
     float:left;
+}
+#profile-pic{
+    width:30px;
+    height: 30px;
+    border-radius: 50%;
+    /* margin-bottom: 10px; */
 }
 .main-title{
     padding-top: 10px;
@@ -140,7 +168,7 @@ export default {
     width: 3px;
     height: 3px;
     border-radius: 5px;
-    margin-top: 12px;
+    /* margin-top: 12px; */
     margin-left: 5px;
     margin-right: 5px;
     background-color: rgb(150, 147, 147);

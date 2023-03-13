@@ -21,8 +21,6 @@
             </div>
           </div>
         </div>
-
-
         <div class = "div-recc-topics">
           TOPICS HEREEE
         </div>

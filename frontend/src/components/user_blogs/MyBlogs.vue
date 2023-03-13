@@ -117,6 +117,7 @@ header {
   width: 100%;
   margin-right: 5%;
 }
+
 .div-reccom{
   float: right;
   height: 100vh;

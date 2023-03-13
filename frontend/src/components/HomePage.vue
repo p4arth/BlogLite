@@ -6,12 +6,26 @@
     <div id = "main-homepage" class = "container">
       <div class = "follower-blogs">
         <div id = "blog-container" v-for="post in followerBlogs" :key="post.id">
-          <BlogCard :post="post" :publisher="false"/>
+          <BlogCard :post="post" :publisher="false" show_img="true"/>
         </div>
       </div>
       <div class = "div-reccom">
-        <div class = "div-recc-topics">Recommended Topics</div>
-        <div class = "div-recc-blogs">Recommended Blogs</div>
+        <h3 style="margin-left:4%">Recommended Blogs</h3>
+        <div class = "div-recc-blogs" 
+             v-for="post in recommendedBlogs" 
+             :key="post.id" >
+          <div class = "container">
+            <b>{{ post.username }}</b>
+            <div class = "recc-title">
+              <b>{{ post.title }}</b>
+            </div>
+          </div>
+        </div>
+
+
+        <div class = "div-recc-topics">
+          TOPICS HEREEE
+        </div>
       </div>
     </div>
     
@@ -29,6 +43,7 @@ export default {
     data() {
         return {
             followerBlogs: [],
+            recommendedBlogs: [],
             userSuggestions: [],
             current_user: "",
         }
@@ -49,8 +64,9 @@ export default {
         headers: {"Authorization": localStorage.jwtToken}
       })
       .then(response => response.json())
-      .then(data => {
-        this.followerBlogs = data
+      .then((data) => {
+        this.followerBlogs = data.follower_blogs;
+        this.recommendedBlogs = data.recommendation_blogs;
       });
 
       // Used if user has no followers.
@@ -73,7 +89,7 @@ export default {
 }
 #blog-container{
   width: 105%;
-  margin-right: 5%;
+  margin-right: 1%;
 }
 #main-homepage{
   background-color: rgb(255, 248, 248);
@@ -94,9 +110,8 @@ header {
 
 .div-reccom{
   float: right;
-  text-align: center;
-  justify-content: center;
   margin-top: 2%;
+  margin-left: 4%;
   width: 40%;
 }
 .div-recc-topics{
@@ -104,7 +119,9 @@ header {
   background-color: red;
 }
 .div-recc-blogs{
-  height: 50vh;
-  background-color: blue;
+  width: 75%;
+  padding: 1%;
+  border: none;
+  border-bottom:  2px solid #e0dcdc;
 }
 </style>

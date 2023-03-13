@@ -7,6 +7,7 @@ import random
 import pandas as pd
 from flask_cors import cross_origin
 import datetime
+import numpy as np
 
 def verify_login(username = None, password = None):
     is_user = User.query.filter_by(username = username).first()
@@ -78,11 +79,11 @@ def display_user_homepage(username):
         users_schema = UserSchema(many = True)
         recent_feed_data, user_blogs_data = user_feed_data(username)
         posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
-        # recommended_posts = list(np.random.choice(posts, 3))
+        recommended_posts = list(np.random.choice(posts, 3))
         users = db.session.query(User).filter(User.username != username).all()
         if len(recent_feed_data) > 0:
-            print(1)
-            return posts_schema.dump(recent_feed_data)
+            return {"follower_blogs": posts_schema.dump(recent_feed_data),
+                    "recommendation_blogs": posts_schema.dump(recommended_posts)}
         else:
             return users_schema.dump(users[:5])
     except:

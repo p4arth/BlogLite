@@ -1,6 +1,6 @@
 <template>
 <div class = "card" :id="post.id">
-    <div class="container">
+    <div class="container" style="padding:0">
         <div class = "author-information">
             <div class = "author-profile-picture">
                 IMG
@@ -33,7 +33,6 @@
         </div>
         </div>
         <div class = "blog-image" :style="`background-image: url(${post.image_url})`"></div>
-        
     </div>
 </div>
 </template>

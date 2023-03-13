@@ -10,7 +10,7 @@
                 </b-icon>
             <input id="search-query"
                    class = "search-bar" 
-                   type="text" placeholder="Search.." autocomplete="none">
+                   type="text" placeholder="Search.." autocomplete="false">
         </form>
       </div>
       <div class = "menu-container">

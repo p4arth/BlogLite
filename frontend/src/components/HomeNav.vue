@@ -1,7 +1,9 @@
 <template>
     <nav>
       <div class = "menu-item-logo">
-        <img src = "../assets/bl_logo.png">
+        <a id = "logo-link" href="/">
+            <img src = "../assets/bl_logo.png">
+        </a>
         <form @submit.prevent="search" style="float:left;">
             <b-icon id="search-nav"
                     icon="search" 
@@ -59,6 +61,8 @@ export default {
         }
     },
     mounted(){
+      const logo = document.getElementById("logo-link");
+      logo.href = `http://127.0.0.1:8080/${localStorage.currUser}/homepage`;
       const path = `http://127.0.0.1:5000/api/get/profile_picture/${localStorage.currUser}`
       fetch(path, {
             methods: "GET",

@@ -25,6 +25,7 @@ def verify_login(username = None, password = None):
 def signup_page():
     try:
         json_data = request.get_json()
+        full_name = json_data["full_name"]
         username = json_data["name"]
         password = json_data["password"]
         email = json_data["email"]
@@ -32,13 +33,13 @@ def signup_page():
             return jsonify({"username": username, "status": "Username is already taken"})
         else:
             new_user = User(
+                full_name = full_name,
                 _username = username,
                 _password = password,
                 email = email,
                 _followers = 0,
                 _posts = 0
             )
-            
             db.session.add(new_user)
             db.session.commit()
             user_csv = pd.read_csv("./instance/metadata.csv")
@@ -114,7 +115,6 @@ def user_feed_data(username):
 
 @app.route("/api/search/", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
 def get_search_results():
     query = "%" + request.args.get('q') + "%"
     search_users = User.query.filter(User.username.like(query)).all()

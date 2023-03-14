@@ -31,7 +31,6 @@
             <form id="auth-form" @submit.prevent="submitLogin" >
                 <!-- Enter your Email -->
                 <div id="username-div">
-                    
                     <input type="text" 
                         id="username" 
                         name="username" 
@@ -59,25 +58,32 @@
                     <h5 id = "auth-modal-title" class="modal-title">Get Started with BlogLite</h5>
                 </div>
                 <form id = "auth-form" @submit.prevent = "submitSignup">
+                    <div id = "full-name-div">
+                      <input type="text" 
+                             id="full-name" 
+                             name="full-name" 
+                             placeholder = "Enter Full Name" 
+                             autocomplete = "off" v-model="full_name" required />
+                    </div>
                     <div id = "email-div">
                       <input type="email" 
                              id="email" 
-                             name="email" 
+                             name="email"
                              placeholder = "Enter Email" 
-                             autocomplete = "off" required />
+                             autocomplete = "off" v-model="email" required />
                     </div>
                     <div id = "username-div">
                       <input type="text" 
                              id="username" 
                              name="username" 
                              placeholder = "Enter username"  
-                             autocomplete = "off" required />
+                             autocomplete = "off" v-model="username" required />
                     </div>
                     <div id = "password-div">
                       <input id="password" 
                              name="password" 
                              placeholder = "Enter password" 
-                             autocomplete = "off" required />
+                             autocomplete = "off" v-model="password" required />
                     </div>
                     <input id="signup-button" type="submit" value="Sign Up" />
                 </form>
@@ -104,6 +110,7 @@ export default {
             username: "",
             password: "",
             email: "",
+            full_name: "",
         }
     },
     methods: {
@@ -111,7 +118,7 @@ export default {
             this.login(this.username, this.password);
         },
         submitSignup() {
-            this.signup(this.email, this.username, this.password);
+            this.signup(this.full_name, this.email, this.username, this.password);
         },
         login: function(username, password){
             const loginPath = 'http://127.0.0.1:5000/api/login';
@@ -146,10 +153,11 @@ export default {
                 };
                 loginChanges();    
         },
-        signup: function(email, username, password){
+        signup: function(full_name, email, username, password){
             const signupPath = 'http://127.0.0.1:5000/api/signup';
             const signupResult = axios.post(signupPath,
-                            {name: username, password: password, email: email}, 
+                            {name: username, password: password,
+                            email: email, full_name: full_name}, 
                             {headers: {'Content-Type': 'application/json'}})
                             .then((response) => response.data)
                             .then((user) => {
@@ -282,7 +290,7 @@ nav .menu-item a {
 input{
     text-align: center;
 }
-#email, #username, #password{
+#email, #username, #password, #full-name{
     margin-bottom: 5%;
     outline:none;
     width: 70%;
@@ -295,7 +303,7 @@ input{
     transition: border-bottom 0.2s ease-in-out;
 
   }
-  #email:focus, #username:focus, #password:focus{
+  #email:focus, #username:focus, #password:focus, #full-name:focus{
     border-bottom: 2px solid rgb(7, 7, 6);
   }
   #login-button, #signup-button{

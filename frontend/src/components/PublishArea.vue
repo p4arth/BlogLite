@@ -60,7 +60,6 @@ export default {
             })
             const postData = async () => {
                 this.post = await response;
-                console.log(this.post);
             }
             postData();
             
@@ -91,12 +90,12 @@ export default {
         });
     },
     methods: {
-        publish: function() {
+        publish: async function() {
             const title = document.getElementById("title").value;
             const content = document.getElementById("content").value;
             const image = document.getElementById("image").value;
             const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/publish_new_article`;
-            fetch(path, {
+            await fetch(path, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,18 +108,22 @@ export default {
                 })
             }).then(response => {
                 if (response.ok) {
-                    console.log(response.json());
+                    return response.json()
                 } else {
                     throw new Error('API respone was not OK');
                 }
             })
+            .then((data) => {
+                this.post = data;
+            })
+            window.location.href = `http://127.0.0.1:8080/${localStorage.currUser}/blog/${this.post.id}`;
         },
-        edit: function(){
+        edit: async function(){
             const title = document.getElementById("title").value;
             const content = document.getElementById("content").value;
             const image = document.getElementById("image").value;
             const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/edit/post`;
-            fetch(path, {
+            await fetch(path, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,11 +137,15 @@ export default {
                 })
             }).then(response => {
                 if (response.ok) {
-                    console.log(response.json());
+                    return response.json();
                 } else {
                     throw new Error('API respone was not OK');
                 }
             })
+            .then((data) => {
+                this.post = data;
+            })
+            window.location.href = `http://127.0.0.1:8080/${localStorage.currUser}/blog/${this.post.id}`;
         }
     }
 

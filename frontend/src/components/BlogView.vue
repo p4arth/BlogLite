@@ -73,9 +73,7 @@ header {
   justify-content: center;
   align-items: center;
   background-color: rgb(255, 248, 248);
-}
-#content{
-    margin-right: 600px;
-    margin-left: 600px;
+  margin-right: 30%;
+  margin-left: 30%;
 }
 </style>

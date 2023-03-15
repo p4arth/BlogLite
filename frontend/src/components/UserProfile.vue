@@ -43,6 +43,9 @@
                         class="follow-button"
                         @click="followClick">Following</button>
             </div>
+            <div v-else id="edit-profile" v-b-modal.edit-details>
+                Edit Profile
+            </div>
         </div>
     </MyBlogs>
     <!-- Modals -->
@@ -58,6 +61,23 @@
             <div v-for="following in user_details.following" :key="following.follows">
                 <p>{{ following.follows }}</p>
             </div>
+        </b-modal>
+        <!-- EDIT DETAILS MODALS -->
+        <b-modal id="edit-details" title="BootstrapVue">
+            <form id = "auth-form" @submit.prevent = "submitProfileChanges">
+                    <div id = "new-bio-text-div">
+                      <input type="text" 
+                             placeholder = "Enter new bio text" 
+                             v-model="new_bio_text"
+                             autocomplete = "off"/>
+                    </div>
+                    <div id = "new-pfp-link-div">
+                      <input placeholder = "Enter new profile picture link"
+                             v-model="new_pfp_link"
+                             autocomplete = "off"/>
+                    </div>
+                    <input id="save-button" type="submit" value="Save" />
+                </form>
         </b-modal>
     </div>
 </div>
@@ -78,6 +98,8 @@ export default{
             followers_count: "",
             isFollowing: false,
             follow_button_value: "Follow",
+            new_bio_text: "",
+            new_pfp_link: "",
         }
     },
     created(){
@@ -90,7 +112,7 @@ export default{
     methods: {
         getProfileData: async function(){
             if(localStorage.currUser === this.user){
-                console.log("PROFILE CURR");
+                // console.log("PROFILE CURR");
                 this.is_curr = true;
                 const profPath = `http://127.0.0.1:5000/api/${localStorage.currUser}/my-profile`;
                 await fetch(profPath, {
@@ -104,7 +126,7 @@ export default{
                 .then(data => this.followers_count = data.followers_count)
             }
             else{
-                console.log("PROFILE NOT CURR");
+                // console.log("PROFILE NOT CURR");
                 const profPath = `http://127.0.0.1:5000/api/${this.user}/my-profile`;
                 await fetch(profPath, {
                     headers: {
@@ -177,6 +199,34 @@ export default{
                 this.isFollowing = false;
                 this.followers_count = this.followers_count - 1;
             }
+        },
+        submitProfileChanges: function(){
+            this.profileChanges(this.new_bio_text, this.new_pfp_link);
+        },
+        profileChanges: async function(new_bio, new_pfp){
+            const path = `http://127.0.0.1:5000/api/profile_change/${localStorage.currUser}`;
+            await fetch(path, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "Authorization": localStorage.jwtToken,
+                        },
+                        body: JSON.stringify({
+                            "new_bio": new_bio,
+                            "new_pfp": new_pfp
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                        })
+            location.reload();
+            
         }
     }
 }
@@ -226,7 +276,6 @@ export default{
 
 .profile-follow{
     float: left;
-    /* margin-top: 1%; */
     margin-left: 5%;
     width: 250px;
 }
@@ -257,13 +306,36 @@ export default{
     color: rgb(20, 20, 20);
 }
 
+#edit-profile{
+    float:left;
+    margin-left: 6%;
+    padding: 3px;
+    font-size: small;
+    color: rgb(77, 76, 76);
+    font-weight: 500;
+    border: 1px solid rgb(134, 134, 134);
+    border-radius: 7%;
+}
+#edit-profile:hover{
+    color: black;
+    border: 1px solid black;
+    cursor: pointer;
+}
 
+#new-bio-text-div input, #new-pfp-link-div input{
+    margin-bottom: 10px;
+    width: 80%;
+    padding: 10px;
+    font-size: 17px;
+    border: 2px solid rgb(245, 243, 239);
+    border-radius: 20px;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+}
 
-
-
-
-
-
+#new-bio-text-div input:hover, #new-pfp-link-div input:hover{
+    background-color: rgb(173, 171, 167);
+}
 
 
 

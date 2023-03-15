@@ -157,3 +157,21 @@ def get_user_profile(username):
     return jsonify({
         "link": user.pfp_link,
     })
+
+@app.route("/api/profile_change/<username>", methods = ["POST"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def change_user_profile(username):
+    user = db.session.query(User).filter(User.username == username).first()
+    data = request.get_json()
+    new_pfp_link = data.get("new_pfp", None)
+    new_bio_text = data.get("new_bio", None)
+    if new_pfp_link:
+        user.pfp_link = new_pfp_link
+    if new_bio_text:
+        user.biotext = new_bio_text
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({
+        "auth": "success",
+    })

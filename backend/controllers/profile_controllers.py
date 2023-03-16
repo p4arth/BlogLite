@@ -5,7 +5,8 @@ from flask import request
 from flask_cors import cross_origin
 from flask import redirect, jsonify
 from models.models import User, db, FollowersSchema
-import pandas as pd
+# import pandas as pd
+from controllers.email_controllers import send_email_to_user
 
 
 @app.route("/api/<username>/my-profile", methods = ["GET"])
@@ -175,3 +176,10 @@ def change_user_profile(username):
     return jsonify({
         "auth": "success",
     })
+
+
+@app.route('/send-email', methods = ['GET', 'POST'])
+def send_email():
+    # user_id = request.json.get('user_id')
+    send_email_to_user.delay()
+    return jsonify({'message': 'Email sent'})

@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask import request, jsonify
 from functools import wraps
+from application import workers
 import jwt
 
 
@@ -18,12 +19,21 @@ app.config['CORS_HEADERS'] = ["Content-Type", "Authorization"]
 app.config['SECRET_KEY'] = 'thisissecret'
 DATABASE_PATH = "sqlite:///" + str(os.getcwd()) + "/instance/database.sqlite3"
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_PATH
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/1'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/2'
 api = Api(app)
 ma = Marshmallow(app)
 db = SQLAlchemy()
 db.init_app(app)
 app.app_context().push()
 
+celery = workers.celery
+celery.conf.update(
+    broker_url = app.config["CELERY_BROKER_URL"],
+    result_backend = app.config["CELERY_RESULT_BACKEND"]
+)
+celery.Task = workers.ContextTask
+app.app_context().push()
 
 def token_required(f):
     @wraps(f)

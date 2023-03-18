@@ -1,6 +1,6 @@
 from datetime import datetime
 from models.models import *
-from app import app, token_required
+from app import app, token_required, cache
 from flask import render_template
 from flask import request
 from flask import jsonify, make_response
@@ -8,7 +8,8 @@ from sqlalchemy import exc
 from flask_cors import cross_origin
 from models.models import PostSchema
 import csv
-from io import StringIO 
+from io import StringIO
+import time
 
 @app.route("/api/<username>/publish_new_article", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
@@ -145,6 +146,7 @@ def delete_article(username):
     })
 
 @app.route("/api/<username>/my-blogs")
+@cache.memoize(500)
 @cross_origin(origin = '*', headers = ['Content-type'])
 @token_required
 def my_blogs_redir(username):

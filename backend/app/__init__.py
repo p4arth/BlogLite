@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
+from flask_caching import Cache
 from flask import request, jsonify
 from functools import wraps
 from application import workers
@@ -21,6 +22,10 @@ DATABASE_PATH = "sqlite:///" + str(os.getcwd()) + "/instance/database.sqlite3"
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_PATH
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/1'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/2'
+app.config['REDIS_URL'] =  "redis://localhost:6379"
+app.config['CACHE_TYPE'] = "RedisCache"
+app.config['CACHE_REDIS_HOST'] = "localhost"
+app.config['CACHE_REDIS_PORT'] = 6379
 api = Api(app)
 ma = Marshmallow(app)
 db = SQLAlchemy()
@@ -33,6 +38,9 @@ celery.conf.update(
     result_backend = app.config["CELERY_RESULT_BACKEND"]
 )
 celery.Task = workers.ContextTask
+app.app_context().push()
+
+cache = Cache(app)
 app.app_context().push()
 
 def token_required(f):

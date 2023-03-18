@@ -22,7 +22,7 @@ from celery.schedules import crontab
 
 @celery.on_after_finalize.connect
 def setup_periodic_email_task(sender, **kwargs):
-    sender.add_periodic_task(10.0, send_email_to_user.s(), name="At every 10")
+    sender.add_periodic_task(100000.0, send_email_to_user.s(), name="At every 10")
 
 @celery.task()
 def send_email_to_user():

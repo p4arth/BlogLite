@@ -19,7 +19,6 @@ def verify_login(username = None, password = None):
                 return True
             return False
 
-
 @app.route("/api/signup", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def signup_page():
@@ -71,34 +70,62 @@ def login_page():
         except:
             return jsonify({"username": username, "status": "Error", "auth_token": None})
 
-@app.route("/api/<username>/homepage", methods = ["GET"])
-@cross_origin(origin = '*', headers = ['Content-type'])
+# @app.route("/api/<username>/homepage", methods = ["GET"])
+# @cross_origin(origin = '*', headers = ['Content-type'])
+# @token_required
+# def display_user_homepage(username):
+#     posts_schema = PostSchema(many = True)
+#     users_schema = UserSchema(many = True)
+#     recent_feed_data, user_blogs_data = user_feed_data(username)
+#     posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
+#     recommended_posts = list(np.random.choice(posts, 3))
+#     users = db.session.query(User).filter(User.username != username).all()
+#     if len(recent_feed_data) > 0:
+#         return {"follower_blogs": posts_schema.dump(recent_feed_data),
+#                 "recommendation_blogs": posts_schema.dump(recommended_posts)}
+#     else:
+#         return users_schema.dump(users[:5])
+    
+@app.route("/api/<username>/homepage", methods=["GET"])
+@cross_origin(origin='*', headers=['Content-type'])
 @token_required
 def display_user_homepage(username):
     try:
-        posts_schema = PostSchema(many = True)
-        users_schema = UserSchema(many = True)
+        if not username:
+            raise ValueError("Missing username parameter")
+        posts_schema = PostSchema(many=True)
+        users_schema = UserSchema(many=True)
         recent_feed_data, user_blogs_data = user_feed_data(username)
-        posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
+        if not recent_feed_data:
+            users = db.session.query(User).filter(User.username != username).all()
+            return users_schema.dump(users[:5]), 200
+        posts = db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
         recommended_posts = list(np.random.choice(posts, 3))
-        users = db.session.query(User).filter(User.username != username).all()
-        if len(recent_feed_data) > 0:
-            return {"follower_blogs": posts_schema.dump(recent_feed_data),
-                    "recommendation_blogs": posts_schema.dump(recommended_posts)}
-        else:
-            return users_schema.dump(users[:5])
-    except:
-        pass
+        return {
+            "follower_blogs": posts_schema.dump(recent_feed_data),
+            "recommendation_blogs": posts_schema.dump(recommended_posts)
+        }, 200
+    except ValueError as e:
+        return {"error": str(e)}, 400
+    except Exception as e:
+        return {"error": "An error occurred while processing your request."}, 500
 
 @app.route("/api/<username>", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 @token_required
 def get_user_details(username):
-    user_schema = UserSchema()
-    user = db.session.query(User).filter((User.username == username)).first()
-    print("-"*50)
-    print(user)
-    return user_schema.dump(user)
+    try:
+        if not username:
+            raise ValueError("Missing username parameter")
+        user_schema = UserSchema()
+        user = db.session.query(User).filter((User.username == username)).first()
+        if not user:
+            return {"message": "User not found."}, 404
+        return user_schema.dump(user), 200
+    except ValueError as e:
+        return {"error": str(e)}, 400
+    except Exception as e:
+        return {"error": "An error occurred while processing your request."}, 500
 
 def user_feed_data(username):
     following = db.session.query(Followers).filter(Followers.username == username).all()
@@ -112,13 +139,20 @@ def user_feed_data(username):
     user_blogs = db.session.query(Post).filter(Post.username == username).all()
     return post_objs_list, user_blogs
 
-
 @app.route("/api/search/", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
 def get_search_results():
-    query = "%" + request.args.get('q') + "%"
-    search_users = User.query.filter(User.username.like(query)).all()
-    users_schema = UserSchema(many=True)
-    return jsonify({
-        "results": users_schema.dump(search_users)
-    })
+    try:
+        query = request.args.get("q")
+        if not query:
+            raise ValueError("Missing Query Parameter")
+        query = "%" + query + "%"
+        search_users = User.query.filter(User.username.like(query)).all()
+        if not search_users:
+            return {"message": "No results found."}, 200
+        users_schema = UserSchema(many=True)
+        return {"results": users_schema.dump(search_users)}, 200
+    except ValueError as e:
+        return {"error": str(e)}, 400
+    except Exception as e:
+        return {"error": "An error occurred while processing your request."}, 500

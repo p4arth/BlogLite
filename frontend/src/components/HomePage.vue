@@ -15,14 +15,22 @@
              v-for="post in recommendedBlogs" 
              :key="post.id" >
           <div class = "container">
-            <b>{{ post.username }}</b>
-            <div class = "recc-title">
-              <b>{{ post.title }}</b>
-            </div>
+            <b style="font-weight: 630;">By {{ post.username }}</b>
+            <a :href="`../${post.username}/blog/${post.id}`" style="color:inherit; text-decoration: none;">
+              <div class = "recc-title" style="font-weight: 690;">
+                {{ post.title }}
+              </div>
+            </a>
           </div>
         </div>
         <div class = "div-recc-topics">
-          TOPICS HEREEE
+          <h3 style="margin-left:4%">Recommended Topics</h3>
+          <div>
+            <div class="div-recc-topic-button" 
+                 v-for="(topic,index) in const_topics" :key="index">
+                 {{ topic }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -44,6 +52,12 @@ export default {
             recommendedBlogs: [],
             userSuggestions: [],
             current_user: "",
+            const_topics: [
+              "Data Science", "Machine Learning",
+              "Math", "Poetry", "Deep Learning",
+              "Psychology", "Software Development",
+              "Python", "Coding", "Technology"
+            ]
         }
     },
     created(){
@@ -113,13 +127,33 @@ header {
   width: 40%;
 }
 .div-recc-topics{
-  height: 50vh;
-  background-color: red;
+  width: 75%;
+  padding: 1%;
+  border: none;
 }
 .div-recc-blogs{
   width: 75%;
   padding: 1%;
   border: none;
   border-bottom:  2px solid #e0dcdc;
+}
+.div-recc-topic-button{
+  border: 1px solid black;
+  border-radius: 50px;
+  text-align: center;
+  width: fit-content;
+  padding: 5px;
+  float: left;
+  margin: 5px;
+  border-color: grey;
+  color: grey;
+  font-size: small;
+  transition: all .1s ease-out;
+}
+.div-recc-topic-button:hover{
+  cursor: pointer;
+  border-color: black;
+  color: black;
+  background-color: rgb(226, 223, 223);
 }
 </style>

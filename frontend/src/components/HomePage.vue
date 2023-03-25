@@ -3,7 +3,7 @@
     <header>
       <HomeNav />
     </header>
-    <div id = "main-homepage" class = "container">
+    <div id = "main-homepage" class = "container"> 
       <div class = "follower-blogs">
         <div id = "blog-container" v-for="post in followerBlogs" :key="post.id">
           <BlogCard :post="post" :publisher="false" show_img="true"/>

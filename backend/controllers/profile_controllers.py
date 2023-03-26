@@ -178,8 +178,8 @@ def change_user_profile(username):
     })
 
 
-@app.route('/send-email', methods = ['GET', 'POST'])
-def send_email():
-    # user_id = request.json.get('user_id')
-    send_email_to_user.delay()
-    return jsonify({'message': 'Email sent'})
+# @app.route('/send-email', methods = ['GET', 'POST'])
+# def send_email():
+#     # user_id = request.json.get('user_id')
+#     send_email_to_user.delay()
+#     return jsonify({'message': 'Email sent'})

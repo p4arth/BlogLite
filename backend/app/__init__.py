@@ -64,9 +64,8 @@ def token_required(f):
         return f(*args, **kwargs)
     return decorated
 
-
 # Import Views.
-from controllers import login_controllers, post_controller, profile_controllers
+from controllers import login_controllers, post_controller, profile_controllers, email_controllers
 from api.api_routers import *
 api.add_resource(UserAPI,
                  "/api/user/<username>",

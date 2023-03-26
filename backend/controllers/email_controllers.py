@@ -19,10 +19,23 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from celery.schedules import crontab
+from models.models import User, db, Post, Followers
+import datetime
+from flask import render_template
 
+# @celery.on_after_finalize.connect
+# def setup_periodic_email_task(sender, **kwargs):
+#     sender.add_periodic_task(1.0, send_email_to_user.s(), name="At every 10")
+
+# schedule = crontab(day_of_month='1', hour='0', minute='0')
+# schedule = crontab(second='10')
 @celery.on_after_finalize.connect
 def setup_periodic_email_task(sender, **kwargs):
-    sender.add_periodic_task(100000.0, send_email_to_user.s(), name="At every 10")
+    sender.add_periodic_task(
+        30.0,
+        send_month_report_to_users.s(),
+        name='monthly_report'
+    )
 
 @celery.task()
 def send_email_to_user():
@@ -47,6 +60,49 @@ def send_email_to_user():
     # response = sg.send(message)
     print("EMAIL SENTTTT")
 
+
+def in_current_month(timestamp):
+    dt = datetime.datetime.strptime(timestamp, '%d/%m/%Y %H:%M:%S')
+    current_month = datetime.datetime.now().month
+    return dt.month == current_month
+
+def generate_monthly_report(username):
+    user_posts_info = db.session.query(Post).filter(Post.username == username).all()
+    followers_info = db.session.query(Followers).filter(Followers.follows == username).all()
+    total_posts = len(user_posts_info)
+    total_followers = len(followers_info)
+    posts_this_month = 0
+    for post in user_posts_info:
+        if in_current_month(post.timestamp):
+            posts_this_month = posts_this_month + 1
+    return {
+        "total_posts": total_posts,
+        "total_followers": total_followers,
+        "posts_this_month": posts_this_month
+    }
+
+@celery.task
+def send_month_report_to_users():
+    print("SENDING EMAILLL")
+    all_user_info = db.session.query(User).all()
+    for user in all_user_info:
+        report = generate_monthly_report(user.username)
+        report_html_string = render_template('report.html', report = report)
+        message = Mail(
+            from_email = 'theraidercomes1@gmail.com',
+            to_emails = user.email,
+            subject = 'Monthly Engagement Report',
+            html_content = report_html_string,
+        )
+        try:
+            sg = SendGridAPIClient(api_key="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")
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(e.message)
+    print("EMAIL SENTTT")
 
 
 # Get the details for the posts for the current day from the posts table

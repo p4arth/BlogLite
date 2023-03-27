@@ -9,7 +9,6 @@ from flask_cors import cross_origin
 from models.models import PostSchema
 import csv
 from io import StringIO
-import time
 
 @app.route("/api/<username>/publish_new_article", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
@@ -162,16 +161,17 @@ def get_post_api(post_id):
     return post_schema.dump(post)
 
 @app.route("/api/blogs/<username>")
+@cache.memoize(500)
 @cross_origin(origin = '*', headers = ['Content-type'])
 def user_blogs(username):
     posts_schema = PostSchema(many=True)
     posts = db.session.query(Post).filter((Post.username == username)).all()
     return posts_schema.dump(posts) 
 
-@app.route("/api/get/blog/")
+@app.route("/api/get/blog/<username>")
 @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
-def export_blog_csv():
+@token_required
+def export_blog_csv(username):
     post_id = request.args.get('post_id')
     post = db.session.query(Post).filter((Post.id == post_id)).first()
     data = [

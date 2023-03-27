@@ -43,11 +43,14 @@ app.app_context().push()
 cache = Cache(app)
 app.app_context().push()
 
+users_logged_in_today = []
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
         # print("-----------------------------")
+        # print(request)
         # print(request.headers)
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
@@ -57,12 +60,14 @@ def token_required(f):
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms = ['HS256'])
             # print(data)
+            # print(kwargs["username"])
             if kwargs["username"] != data["username"]:
                 return jsonify({'message' : 'Invalid User!'}), 404
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
         return f(*args, **kwargs)
     return decorated
+
 
 # Import Views.
 from controllers import login_controllers, post_controller, profile_controllers, email_controllers

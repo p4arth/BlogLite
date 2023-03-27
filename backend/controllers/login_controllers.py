@@ -1,6 +1,6 @@
 from models.models import *
 from models.models import Post, db, UserSchema, PostSchema
-from app import app, token_required
+from app import app, token_required, users_logged_in_today
 from flask import request, jsonify
 import jwt
 import random
@@ -62,6 +62,7 @@ def login_page():
                 token = jwt.encode({"username": username, 
                                     "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)},
                                     key = app.config["SECRET_KEY"])
+                users_logged_in_today.append([username, datetime.datetime.now().strftime(f"%d/%m/%Y %H:%M:%S")])
                 return jsonify({"username": username, 
                                 "status": "Authenticated",
                                 "auth_token": token})

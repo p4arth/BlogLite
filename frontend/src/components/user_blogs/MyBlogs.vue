@@ -15,7 +15,10 @@
                 </h2>
             </div>
             <div id = "blog-container" v-for="post in followerPosts" :key="post.id">
-                <BlogCard :post="post" :publisher="true" @post-deletion="handle_deletion"/>
+                <BlogCard :post="post" 
+                          :publisher="true"
+                          :is_logged_in="is_user_logged"
+                          @post-deletion="handle_deletion"/>
             </div>
         </div>
         <div class = "div-reccom">
@@ -45,6 +48,7 @@ export default {
         return {
             followerPosts: [],
             current_user: "",
+            is_user_logged: false,
         }
     },
     created(){
@@ -56,6 +60,9 @@ export default {
         })
         .then(reponse => reponse.json())
         .then(data => this.current_user = data);
+      }
+      if(this.$route.params.username === localStorage.currUser){
+        this.is_user_logged = true;
       }
     },
     mounted() {

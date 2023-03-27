@@ -13,11 +13,21 @@
             <div class = "published-date" >
                 {{ post.timestamp }}
             </div>
-            <div v-if="publisher">
+            <div v-if="is_logged_in">
                 <b-dropdown text=":"  variant = "none" size = "sm">
-                    <b-dropdown-item :href="`./edit/post/${post.id}`">Edit</b-dropdown-item>
-                    <b-dropdown-item @click="delete_article">Delete</b-dropdown-item>
-                    <b-dropdown-item @click="exportBlog" id="export-blog-button">Export</b-dropdown-item>
+                    <b-dropdown-item v-if="is_logged_in" 
+                                     :href="`./edit/post/${post.id}`">
+                                     Edit
+                    </b-dropdown-item>
+                    <b-dropdown-item v-if="is_logged_in"
+                                     @click="delete_article">
+                                     Delete
+                    </b-dropdown-item>
+                    <b-dropdown-item v-if="is_logged_in"
+                                     @click="exportBlog"
+                                     id="export-blog-button">
+                                     Export
+                    </b-dropdown-item>
                 </b-dropdown>
             </div>
         </div>
@@ -43,7 +53,7 @@
 <script>
 export default {
     name: "BlogCard",
-    props: ["post", "publisher"],
+    props: ["post", "publisher", "is_logged_in"],
     data() {
         return {
             "pfp_link": "",
@@ -83,7 +93,7 @@ export default {
             })
         },
         exportBlog: async function(){
-            let path = `http://127.0.0.1:5000/api/get/blog/`
+            let path = `http://127.0.0.1:5000/api/get/blog/${this.$route.params.username}`
             let queryString = "?post_id=" + encodeURIComponent(this.post.id);
             let fUrl = path + queryString;
             await fetch(fUrl, {

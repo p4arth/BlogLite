@@ -14,7 +14,7 @@
 
 # smtp_object.sendmail(from_address, to_address, message)
 # smtp_object.quit()
-from app import celery
+from app import celery, users_logged_in_today
 import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -23,23 +23,31 @@ from models.models import User, db, Post, Followers
 import datetime
 from flask import render_template
 
-# @celery.on_after_finalize.connect
-# def setup_periodic_email_task(sender, **kwargs):
-#     sender.add_periodic_task(1.0, send_email_to_user.s(), name="At every 10")
+@celery.on_after_finalize.connect
+def setup_periodic_email_task(sender, **kwargs):
+    sender.add_periodic_task(10.0, send_email_to_user.s(), name="At every 10")
 
 # schedule = crontab(day_of_month='1', hour='0', minute='0')
 # schedule = crontab(second='10')
-@celery.on_after_finalize.connect
-def setup_periodic_email_task(sender, **kwargs):
-    sender.add_periodic_task(
-        30.0,
-        send_month_report_to_users.s(),
-        name='monthly_report'
-    )
+# @celery.on_after_finalize.connect
+# def setup_periodic_email_task(sender, **kwargs):
+#     sender.add_periodic_task(
+#         30.0,
+#         send_month_report_to_users.s(),
+#         name='monthly_report'
+#     )
+
+def get_usernames_posted_today():
+    dt = datetime.datetime.now().strftime('%d/%m/%Y') + "%"
+    today_posts = db.session.query(Post).filter(Post.timestamp.not_like(dt)).all()
+    return today_posts
 
 @celery.task()
 def send_email_to_user():
     print("THIS TASK IS BEING EXECUTED")
+    posts = get_usernames_posted_today()
+    print("--------------------------------------------------------------")
+    print(posts)
     # Set your SendGrid API key
     # sg_api_key = "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"
     # # Set sender, recipient, subject and message body
@@ -58,7 +66,9 @@ def send_email_to_user():
     # sg = SendGridAPIClient(api_key=sg_api_key)
     # # Send the email message
     # response = sg.send(message)
-    print("EMAIL SENTTTT")
+    # 
+    # print(users_logged_in_today)
+    # print("EMAIL SENTTTT")
 
 
 def in_current_month(timestamp):

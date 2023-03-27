@@ -51,19 +51,19 @@
     <!-- Modals -->
     <div>
         <!-- Following Modal -->
-        <b-modal id="modal-followers" title="BootstrapVue">
+        <b-modal id="modal-followers" title="Followers">
             <div v-for="follower in user_details.followers" :key="follower.username">
                 <p>{{ follower.username }}</p>
             </div>
         </b-modal>
         <!-- Followers Modal -->
-        <b-modal id="modal-following" title="BootstrapVue">
+        <b-modal id="modal-following" title="Following">
             <div v-for="following in user_details.following" :key="following.follows">
                 <p>{{ following.follows }}</p>
             </div>
         </b-modal>
         <!-- EDIT DETAILS MODALS -->
-        <b-modal id="edit-details" title="BootstrapVue">
+        <b-modal id="edit-details" title="Edit Profile">
             <form id = "auth-form" @submit.prevent = "submitProfileChanges">
                     <div id = "new-bio-text-div">
                       <input type="text" 

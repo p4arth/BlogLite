@@ -160,13 +160,17 @@ def get_post_api(post_id):
     post = db.session.query(Post).filter((Post.id == post_id)).first()
     return post_schema.dump(post)
 
-@app.route("/api/blogs/<username>")
 @cache.memoize(500)
+@app.route("/api/blogs/<username>")
 @cross_origin(origin = '*', headers = ['Content-type'])
 def user_blogs(username):
     posts_schema = PostSchema(many=True)
     posts = db.session.query(Post).filter((Post.username == username)).all()
     return posts_schema.dump(posts) 
+
+@app.route("/cache_lookup")
+def see_cache():
+    return cache.cache.get_dict()
 
 @app.route("/api/get/blog/<username>")
 @cross_origin(origin = '*', headers = ['Content-type'])

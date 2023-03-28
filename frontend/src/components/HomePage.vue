@@ -66,7 +66,14 @@ export default {
       fetch(userPath, {
         headers: {"Authorization": localStorage.jwtToken}
       })
-      .then(reponse => reponse.json())
+      .then(
+        (response) => {
+          if(!response.ok){
+            window.location.href = "http://localhost:8080/error/forbidden-request";
+          }
+          return response.json()
+        }
+      )
       .then(data => this.current_user = data);
     },
     mounted() {
@@ -75,7 +82,14 @@ export default {
       fetch(path1, {
         headers: {"Authorization": localStorage.jwtToken}
       })
-      .then(response => response.json())
+      .then(
+        (response) => {
+          if(!response.ok){
+            window.location.href = "http://localhost:8080/error/forbidden-request";
+          }
+          return response.json()
+        }
+      )
       .then((data) => {
         this.followerBlogs = data.follower_blogs;
         this.recommendedBlogs = data.recommendation_blogs;
@@ -86,7 +100,14 @@ export default {
       fetch(path2, {
         headers: {"Authorization": localStorage.jwtToken}
       })
-      .then(response => response.json())
+      .then(
+        (response) => {
+          if(!response.ok){
+            window.location.href = "http://localhost:8080/error/forbidden-request";
+          }
+          return response.json()
+        }
+      )
       .then(data => {
         this.userSuggestions = data
       });

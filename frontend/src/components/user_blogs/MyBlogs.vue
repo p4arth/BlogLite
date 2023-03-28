@@ -75,6 +75,7 @@ export default {
         })
         .then(response => response.json())
         .then(data => {
+          console.log(data);
           this.followerPosts = data
         });
       }
@@ -87,6 +88,7 @@ export default {
         })
         .then(response => response.json())
         .then(data => {
+          console.log(data);
           this.followerPosts = data
         });
       }

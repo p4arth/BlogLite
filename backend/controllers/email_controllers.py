@@ -23,9 +23,9 @@ from models.models import User, db, Post, Followers
 import datetime
 from flask import render_template
 
-@celery.on_after_finalize.connect
-def setup_periodic_email_task(sender, **kwargs):
-    sender.add_periodic_task(10.0, send_email_to_user.s(), name="At every 10")
+# @celery.on_after_finalize.connect
+# def setup_periodic_email_task(sender, **kwargs):
+#     sender.add_periodic_task(10.0, send_email_to_user.s(), name="At every 10")
 
 # schedule = crontab(day_of_month='1', hour='0', minute='0')
 # schedule = crontab(second='10')

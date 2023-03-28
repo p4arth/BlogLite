@@ -29,6 +29,7 @@ export default {
     }
   },
   mounted(){
+    localStorage.clear();
     const path = window.location.href;
     if(path.includes("login")){
       if(this.message == "Get Started!"){

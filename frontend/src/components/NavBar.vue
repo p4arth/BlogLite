@@ -121,6 +121,7 @@ export default {
             this.signup(this.full_name, this.email, this.username, this.password);
         },
         login: function(username, password){
+            
             const loginPath = 'http://127.0.0.1:5000/api/login';
             const result = axios.post(
                 loginPath,
@@ -141,14 +142,20 @@ export default {
                         const passwordDiv = document.getElementById("password-div");
                         const newP =  document.createElement("p");
                         newP.innerText = "Authenticated!";
+                        newP.style.backgroundColor = 'green';
                         passwordDiv.appendChild(newP);
                         window.location.href = `../${username}/homepage`;
                     }
                     else{
                         const loginDiv = document.getElementById("password-div");
                         const newP =  document.createElement("p");
-                        newP.innerText = "Unable to Authenticate. Try again!";
-                        loginDiv.appendChild(newP);
+                        newP.id = "p-wrong-cred";
+                        const isErrorThere = document.getElementById("p-wrong-cred");
+                        if(!isErrorThere){
+                            newP.innerText = "Unable to Authenticate. Try again!";
+                            newP.style.backgroundColor = 'red';
+                            loginDiv.appendChild(newP);
+                        }
                     }
                 };
                 loginChanges();    
@@ -182,13 +189,18 @@ export default {
                         const newP =  document.createElement("p");
                         newP.setAttribute("id", "p-dup-username");
                         newP.innerText = `Username: ${username} is already taken`;
+                        newP.style.backgroundColor = 'red';
                         usernameDiv.appendChild(newP);
                     }
                     else{
-                        const loginDiv = document.getElementById("signup-form-div");
+                        const signupDiv = document.getElementById("signup-form-div");
                         const newP =  document.createElement("p");
-                        newP.innerText = `Trouble signing user up`;
-                        loginDiv.appendChild(newP);
+                        const isErrorThere = document.getElementById("p-wrong-cred");
+                        if(!isErrorThere){
+                            newP.innerText = `Trouble signing user up`;
+                            newP.style.backgroundColor = 'red';
+                            signupDiv.appendChild(newP);
+                        }
                     }
                 };
                 signupChanges();

@@ -8,6 +8,7 @@ import PublishArea from "../components/PublishArea.vue";
 import EditBlog from "../components/EditBlog.vue";
 import BlogView from "../components/BlogView.vue";
 import SearchResults from "../components/SearchResults.vue";
+import ErrorPage from "../components/ErrorPage.vue";
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -64,5 +65,11 @@ export default new VueRouter({
             component: SearchResults,
             props: (route) => ({ query: route.query.q })
         },
+        {
+            path: "/error/:message",
+            name: "ErrorPage",
+            component: ErrorPage,
+            props: true
+        }
     ],
 })

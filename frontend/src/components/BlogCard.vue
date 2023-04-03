@@ -7,7 +7,10 @@
                 <img id="profile-pic" v-else src="../assets/blankpropic.png">
             </div>
             <div class="dot"></div>
-            <div v-if="!publisher" class = "author-name">{{ post.username }}</div>
+            <div v-if="!publisher" class = "author-name">
+                <a :href="`http://127.0.0.1:8080/${post.username}/profile`"
+                    style="color:inherit;">{{ post.username }}</a>
+            </div>
             <div v-else class = "author-name">You</div>
             <div class="dot"></div>
             <div class = "published-date" >
@@ -151,7 +154,6 @@ export default {
     width:30px;
     height: 30px;
     border-radius: 50%;
-    /* margin-bottom: 10px; */
 }
 .main-title{
     padding-top: 10px;

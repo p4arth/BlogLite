@@ -177,6 +177,13 @@ def change_user_profile(username):
         "auth": "success",
     })
 
+# @app.route("/api/user_follow_suggestions/<username>", methods = ["GET"])
+# @cross_origin(origin = '*', headers = ['Content-type'])
+# @token_required
+# def get_user_follow_suggestions(username):
+#     users = db.session.query(User).filter(User.username != username)
+#     users_schema = UserSchema(many=True)
+#     return users_schema.dump(users)
 
 # @app.route('/send-email', methods = ['GET', 'POST'])
 # def send_email():

@@ -48,14 +48,14 @@ export default {
                     title: "Profile",
                     link: `http://127.0.0.1:8080/${localStorage.currUser}/profile`
                 },
-                {
-                    title: "My Blogs",
-                    link: "./my-blogs"
-                },
-                {
-                    title: "Stats",
-                    link: "./profile"
-                },
+                // {
+                //     title: "My Blogs",
+                //     link: "./my-blogs"
+                // },
+                // {
+                //     title: "Stats",
+                //     link: "./profile"
+                // },
             ],
             pfp_link: "",
         }

@@ -3,7 +3,7 @@
     <header>
       <HomeNav />
     </header>
-    <div id = "main-homepage" class = "container"> 
+    <div v-if="followerBlogs" id = "main-homepage" class = "container"> 
       <div class = "follower-blogs">
         <div id = "blog-container" v-for="post in followerBlogs" :key="post.id">
           <BlogCard :post="post" :publisher="false" show_img="true"/>
@@ -34,7 +34,27 @@
         </div>
       </div>
     </div>
-    
+    <div v-else id = "main-homepage" class = "container">
+      <h1>
+        Why so empty?<br>
+        Follow some people to get this feed going.
+      </h1>
+      <div class="clearfix" id="sugg-user-div" v-for="(user, index) in userSuggestions" :key="index">
+            <div style="float:left">
+                <b>
+                    <a :href="`../${user.username}/profile`" style="color:inherit">
+                        {{ user.full_name }}
+                    </a>
+                </b>
+                <br>
+                <small>{{ user.username }}</small>
+            </div>
+            <div>
+                <img id="sugg-propic" style="float:right" v-if="user.pfp_link" :src="user.pfp_link">
+                <img id="sugg-propic" style="float:right" v-else src="../assets/blankpropic.png">
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -57,7 +77,7 @@ export default {
               "Math", "Poetry", "Deep Learning",
               "Psychology", "Software Development",
               "Python", "Coding", "Technology"
-            ]
+            ],
         }
     },
     created(){
@@ -176,5 +196,23 @@ header {
   border-color: black;
   color: black;
   background-color: rgb(226, 223, 223);
+}
+
+#sugg-user-div{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 1%;
+    
+    width: 40%;
+    margin-bottom: 5px
+}
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+#sugg-propic{
+  width: 10%;
+  height: 10%;
 }
 </style>

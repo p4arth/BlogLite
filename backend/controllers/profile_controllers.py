@@ -1,11 +1,10 @@
 from models.models import *
-from app import app, token_required
+from app import app, token_required, cache
 from flask import render_template
 from flask import request
 from flask_cors import cross_origin
 from flask import redirect, jsonify
 from models.models import User, db, FollowersSchema
-# import pandas as pd
 from controllers.email_controllers import send_email_to_user
 
 
@@ -77,7 +76,6 @@ def follow_func(username):
             'auth': "DELETED"
         })
     
-
 
 @app.route("/<current_user>/profile/<profile_username>", methods = ["GET", "POST"])
 def render_user_profile(current_user, profile_username):

@@ -1,6 +1,6 @@
 <template>
 <div>
-    <MyBlogs :user="`${this.user}`" :isProfile="true" >
+    <MyBlogs :user="`${this.user}`" :isProfile="true" :full_name="user_details.full_name">
         <div class = "profile-section">
             <img v-if="user_details.pfp_link"
                  class = "profile-picture" 

@@ -10,8 +10,10 @@
                         margin-bottom: 2%;
                         border-bottom: 1px solid black;">
                 <h2>
-                  <b v-if="!isProfile">Your Stories</b>
-                  <b v-else >{{ user }}</b>
+                  <b v-if="!isProfile">Your Stories {{ totalBlogs }}</b>
+                  <b v-else >{{ full_name }} :
+                    <small>{{ totalBlogs }} stories</small>
+                  </b>
                 </h2>
             </div>
             <div id = "blog-container" v-for="post in followerPosts" :key="post.id">
@@ -43,7 +45,7 @@ export default {
         HomeNav,
         BlogCard
     },
-    props: ["user", "isProfile"],
+    props: ["user", "isProfile", "full_name"],
     data() {
         return {
             followerPosts: [],
@@ -96,6 +98,11 @@ export default {
     methods: {
       handle_deletion: function() {
         location.reload();
+      }
+    },
+    computed: {
+      totalBlogs(){
+        return this.followerPosts.length
       }
     }
 }

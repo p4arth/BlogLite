@@ -144,8 +144,8 @@ def delete_article(username):
         "auth": "sucess"
     })
 
-@app.route("/api/<username>/my-blogs")
 @cache.memoize(500)
+@app.route("/api/<username>/my-blogs")
 @cross_origin(origin = '*', headers = ['Content-type'])
 @token_required
 def my_blogs_redir(username):
@@ -168,9 +168,6 @@ def user_blogs(username):
     posts = db.session.query(Post).filter((Post.username == username)).all()
     return posts_schema.dump(posts) 
 
-@app.route("/cache_lookup")
-def see_cache():
-    return cache.cache.get_dict()
 
 @app.route("/api/get/blog/<username>")
 @cross_origin(origin = '*', headers = ['Content-type'])

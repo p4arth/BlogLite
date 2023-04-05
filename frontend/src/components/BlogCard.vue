@@ -33,6 +33,22 @@
                     </b-dropdown-item>
                 </b-dropdown>
             </div>
+            <div v-if="is_logged_in">
+                <button v-show="is_export_ready" 
+                        :id="`export-button-${post.id}`"
+                        style="color: white;
+                               background-color: green;
+                               outline: none;
+                               border: none;
+                               border-radius: 5px;
+                               transition: 0.2s all"
+                        onmouseover="this.style.backgroundColor='#006400';"
+                        onmouseout="this.style.backgroundColor='green';">
+                        <small>
+                            Export
+                        </small>
+                    </button>
+            </div>
         </div>
         <div class = "blog-body">
                 <div class = "main-title">
@@ -60,9 +76,11 @@ export default {
     data() {
         return {
             "pfp_link": "",
+            "is_export_ready": false,
         }
     },
     mounted(){
+        localStorage.getItem(`csvData_${this.post.id}`) ? this.showDownloadButton() : false;
         this.get_user_picture();
     },
     methods: {
@@ -112,6 +130,16 @@ export default {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const csvString = event.target.result;
+                localStorage.setItem(`csvData_${this.post.id}`, csvString);
+                this.showDownloadButton();
+            };
+            reader.readAsText(blob);
+        },
+        showDownloadButton: function(){
+            const downloadButton = document.getElementById(`export-button-${this.post.id}`);
+            console.log("I AM HEREE");
+            downloadButton.addEventListener('click', () => {
+                const csvString = localStorage.getItem(`csvData_${this.post.id}`);
                 const csvBlob = new Blob([csvString], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(csvBlob);
                 const link = document.createElement('a');
@@ -120,9 +148,9 @@ export default {
                 link.setAttribute('download', fileName);
                 document.body.appendChild(link);
                 link.click();
-            };
-            reader.readAsText(blob);
-        },
+            });
+            this.is_export_ready = true;
+        }
     }
 }
 </script>

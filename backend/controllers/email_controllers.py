@@ -14,12 +14,21 @@
 
 # smtp_object.sendmail(from_address, to_address, message)
 # smtp_object.quit()
+import requests
+from flask import request
+from flask import make_response
+from flask_cors import cross_origin
 from app import celery, users_logged_in_today
+from app import app, token_required, cache
 import os
+import pandas as pd
+from io import StringIO
+import csv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from celery.schedules import crontab
 from models.models import User, db, Post, Followers
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 import datetime
 from flask import render_template
 
@@ -114,8 +123,44 @@ def send_month_report_to_users():
             print(e.message)
     print("EMAIL SENTTT")
 
+@celery.task
+def export_blog_to_csv_task(username, post_id):
+    post = db.session.query(Post).filter((Post.id == post_id)).first()
+    data = [
+        ["id", "title", "caption", "username", "image_url", "timestamp"],
+        [post.id, post.title, post.caption, post.username, post.image_url, post.timestamp],
+    ]
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerows(data)
+    user_email = db.session.query(User).filter(User.username == username).first().email
+    message = Mail(
+        from_email = 'theraidercomes1@gmail.com',
+        to_emails = user_email,
+        subject = 'Export done alert',
+        html_content = f"You Blog with ID {post_id} has been exported",
+    )
+    try:
+        sg = SendGridAPIClient(api_key="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")
+        sg.send(message)
+    except Exception as e:
+        print(e.message)
+    return output.getvalue()
 
-# Get the details for the posts for the current day from the posts table
-# See how many users have posted today
-# Select all the users that are not in the list of users that have posted today
-# Send emails to all of them
+@app.route("/api/get/blog/<username>")
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def export_blog_csv(username):
+    post_id = request.args.get('post_id')
+    task = export_blog_to_csv_task.delay(username, post_id)
+    output = task.get()
+    response = make_response(output)
+    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+    response.mimetype = 'text/csv'
+    return response
+    
+    
+    
+    
+    
+    

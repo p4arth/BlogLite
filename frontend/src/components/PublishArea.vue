@@ -45,28 +45,34 @@ export default {
         };
     },
     created(){
-        if(this.isEditMode){
-            const path = `http://127.0.0.1:5000/api/get/post/${this.$route.params.post_id}`;
-            const response = fetch(path, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        this.isAuthorized()
+        .then((data) => {
+            if(data){
+                if(this.isEditMode){
+                    const path = `http://127.0.0.1:5000/api/get/post/${this.$route.params.post_id}`;
+                    const response = fetch(path, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    const postData = async () => {
+                        this.post = await response;
+                    }
+                    postData();
                 }
-                return response.json();
-            })
-            const postData = async () => {
-                this.post = await response;
             }
-            postData();
-            
-        }
+            else{
+                window.location.href = `http://127.0.0.1:8080/error/User is not Authorized`;
+            }
+        })
     },
     mounted() {
-        console.log(this.post);
         const textArea = document.getElementById('title');
         textArea.addEventListener('input', function() {
             if(this.scrollHeight !== 54){
@@ -90,11 +96,22 @@ export default {
         });
     },
     methods: {
+        isAuthorized: async function() {
+            const path = `http://127.0.0.1:5000/api/check_auth/${this.$route.params.username}`;
+            const response = await fetch(path, {headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.jwtToken
+            }})
+            if(!response.ok){
+                return false;
+            }
+            return true;
+        },
         publish: async function() {
             const title = document.getElementById("title").value;
             const content = document.getElementById("content").value;
             const image = document.getElementById("image").value;
-            const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/publish_new_article`;
+            const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/publish_new_article`;
             await fetch(path, {
                 method: 'POST',
                 headers: {
@@ -116,13 +133,13 @@ export default {
             .then((data) => {
                 this.post = data;
             })
-            window.location.href = `http://127.0.0.1:8080/${localStorage.currUser}/blog/${this.post.id}`;
+            window.location.href = `http://127.0.0.1:8080/${this.$route.params.username}/blog/${this.post.id}`;
         },
         edit: async function(){
             const title = document.getElementById("title").value;
             const content = document.getElementById("content").value;
             const image = document.getElementById("image").value;
-            const path = `http://127.0.0.1:5000/api/${localStorage.currUser}/edit/post`;
+            const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/edit/post`;
             await fetch(path, {
                 method: 'PUT',
                 headers: {
@@ -145,7 +162,7 @@ export default {
             .then((data) => {
                 this.post = data;
             })
-            window.location.href = `http://127.0.0.1:8080/${localStorage.currUser}/blog/${this.post.id}`;
+            window.location.href = `http://127.0.0.1:8080/${this.$route.params.username}/blog/${this.post.id}`;
         }
     }
 

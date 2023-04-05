@@ -157,3 +157,9 @@ def get_search_results():
         return {"error": str(e)}, 400
     except Exception as e:
         return {"error": "An error occurred while processing your request."}, 500
+
+@app.route("/api/check_auth/<username>", methods = ["GET"])
+@cross_origin(origin = '*', headers = ['Content-type'])
+@token_required
+def check_user_authorization(username):
+    return {"auth": "success"}

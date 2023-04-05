@@ -17,7 +17,7 @@
       </div>
       <div class = "menu-container">
         <div  class="menu-item" style="padding-right:1%">
-            <a href="./publish">
+            <a id="publish-icon" href="#">
                 <b-icon id="publish-nav" icon="pencil-square" scale="1.6">
                 </b-icon>
             </a>
@@ -48,14 +48,6 @@ export default {
                     title: "Profile",
                     link: `http://127.0.0.1:8080/${localStorage.currUser}/profile`
                 },
-                // {
-                //     title: "My Blogs",
-                //     link: "./my-blogs"
-                // },
-                // {
-                //     title: "Stats",
-                //     link: "./profile"
-                // },
             ],
             pfp_link: "",
         }
@@ -83,6 +75,8 @@ export default {
             this.pfp_link = data.link;
           }
         )
+      const publishIcon = document.getElementById("publish-icon");
+      publishIcon.href = `http://127.0.0.1:8080/${localStorage.currUser}/publish`;
     },
     methods: {
         search: function(){
@@ -91,7 +85,6 @@ export default {
             let queryString = "?q=" + encodeURIComponent(searchTerm);
             let fUrl = currUrl + queryString;
             window.location.href = fUrl;
-            
         }
     }
 }

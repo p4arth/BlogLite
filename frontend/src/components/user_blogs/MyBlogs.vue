@@ -141,12 +141,4 @@ header {
   width: 40%;
   border-left: 1px solid black;
 }
-/* .div-recc-topics{
-  height: 50vh;
-  background-color: red;
-}
-.div-recc-blogs{
-  height: 50vh;
-  background-color: blue;
-} */
 </style>

@@ -6,9 +6,25 @@
       <div id = "content-jumbotron" class = "jumbotron">
         <div class = "jumbotron-content" >
             <h1 class="display-4">Start Unleashing your creativity</h1>
-            <p class="lead">This is a simple example of a Bootstrap Jumbotron.</p>
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-            <a class="btn btn-primary btn-lg" role="button">Start Reading</a>
+            <p class="lead">BlogLite is trusted by several users to express their creativites</p>
+        </div>
+      </div>
+      <div id = "content-jumbotron" 
+           class = "jumbotron" 
+           style="background-color: lightsalmon;
+                  width: 40%;
+                  height: 70vh;
+                  float: left;">
+        <div class = "jumbotron-content" >
+        </div>
+      </div>
+      <div id = "content-jumbotron" 
+           class = "jumbotron" 
+           style="background-color: lightpink;
+                  width: 60%;
+                  height: 70vh;
+                  float:left;">
+        <div class = "jumbotron-content" >
         </div>
       </div>
     </div>

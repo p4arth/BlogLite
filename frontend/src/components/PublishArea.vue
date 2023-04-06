@@ -139,6 +139,7 @@ export default {
             const title = document.getElementById("title").value;
             const content = document.getElementById("content").value;
             const image = document.getElementById("image").value;
+            console.log(image);
             const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/edit/post`;
             await fetch(path, {
                 method: 'PUT',
@@ -150,7 +151,7 @@ export default {
                     'post_id': this.post.id,
                     'title': title,
                     'caption': content,
-                    'image-link': image,
+                    'image_link': image,
                 })
             }).then(response => {
                 if (response.ok) {

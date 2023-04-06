@@ -50,6 +50,11 @@
                     </button>
             </div>
         </div>
+        <div>
+            <b-modal id="modal-delete" title="Delete">
+                Are you sure you want to delete this blog?
+            </b-modal>
+        </div>
         <div class = "blog-body">
                 <div class = "main-title">
                     <h4><b>
@@ -93,10 +98,10 @@ export default {
             .then(data => this.pfp_link = data.link);
 
         },
-        delete_article: function(){
+        delete_article: async function(){
             const path = `http://127.0.0.1:5000/api/${this.$route.params.username}/delete_post`;
             const post_id = this.post.id;
-            fetch(path, {
+            await fetch(path, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,9 +114,11 @@ export default {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 console.log(data);
             })
+            window.location.reload();
+
         },
         exportBlog: async function(){
             let path = `http://127.0.0.1:5000/api/get/blog/${this.$route.params.username}`
@@ -167,7 +174,6 @@ export default {
     display: flex;
     margin-top: 2%;
     align-items: center;
-    /* justify-content: center; */
 }
 .blog-manager{
     float: right;
@@ -208,7 +214,6 @@ export default {
     width: 3px;
     height: 3px;
     border-radius: 5px;
-    /* margin-top: 12px; */
     margin-left: 5px;
     margin-right: 5px;
     background-color: rgb(150, 147, 147);

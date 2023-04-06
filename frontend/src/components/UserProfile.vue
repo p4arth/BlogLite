@@ -52,14 +52,28 @@
     <div>
         <!-- Following Modal -->
         <b-modal id="modal-followers" title="Followers">
-            <div v-for="follower in user_details.followers" :key="follower.username">
-                <p>{{ follower.username }}</p>
+            <div v-for="follower in user_details.followers" :key="follower.username" class="clearfix" id="search-user-div" >
+                <div style="float:left">
+                    <b>
+                        <a :href="`../${follower.username}/profile`" style="color:inherit">
+                            {{ follower.username }}
+                        </a>
+                    </b>
+                    <br>
+                </div>
             </div>
         </b-modal>
         <!-- Followers Modal -->
         <b-modal id="modal-following" title="Following">
-            <div v-for="following in user_details.following" :key="following.follows">
-                <p>{{ following.follows }}</p>
+            <div v-for="following in user_details.following" :key="following.follows" class="clearfix" id="search-user-div">
+                <div style="float:left">
+                    <b>
+                        <a :href="`../${following.follows}/profile`" style="color:inherit">
+                            {{ following.follows }}
+                        </a>
+                    </b>
+                    <br>
+                </div>
             </div>
         </b-modal>
         <!-- EDIT DETAILS MODALS -->
@@ -337,22 +351,23 @@ export default{
     background-color: rgb(173, 171, 167);
 }
 
+#search-user-div{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 1%;
+    margin: auto;
+    width: 100%;
+}
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#modal-img{
+    width: 10%;
+    height: 10%;
+}
 .dot {
     width: 3px;
     height: 3px;

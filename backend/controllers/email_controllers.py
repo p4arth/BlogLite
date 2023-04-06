@@ -1,84 +1,77 @@
-# import smtplib
-# email = 'theraidercomes1@gmail.com'
-# password = input()
-# smtp_object = smtplib.SMTP('smtp.gmail.com', 587)
-# smtp_object.starttls()
-# smtp_object.login(email, password)
-
-# from_address = 'theraidercomes1@gmail.com'
-# to_address = 'paarthbhatnagarh3h3@gmail.com'
-# subject = 'Testing SMTP'
-# body = 'Testing SMTP'
-
-# message = f"From: {from_address}\nTo: {to_address}\nSubject: {subject}\n\n{body}"
-
-# smtp_object.sendmail(from_address, to_address, message)
-# smtp_object.quit()
-import requests
 from flask import request
 from flask import make_response
 from flask_cors import cross_origin
-from app import celery, users_logged_in_today
-from app import app, token_required, cache
-import os
-import pandas as pd
+from app import celery
+from app import app, token_required
 from io import StringIO
 import csv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from celery.schedules import crontab
 from models.models import User, db, Post, Followers
-from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+from sendgrid.helpers.mail import Mail
 import datetime
 from flask import render_template
 
-# @celery.on_after_finalize.connect
-# def setup_periodic_email_task(sender, **kwargs):
-#     sender.add_periodic_task(10.0, send_email_to_user.s(), name="At every 10")
+# SCHEDULING TASK FOR DAILY ALERT
+@celery.on_after_finalize.connect
+def setup_periodic_email_task(sender, **kwargs):
+    sender.add_periodic_task(
+        crontab(minute='0', hour='17'),
+        send_email_to_user.s(),
+        name="At every 10"
+    )
 
-# schedule = crontab(day_of_month='1', hour='0', minute='0')
-# schedule = crontab(second='10')
-# @celery.on_after_finalize.connect
-# def setup_periodic_email_task(sender, **kwargs):
-#     sender.add_periodic_task(
-#         30.0,
-#         send_month_report_to_users.s(),
-#         name='monthly_report'
-#     )
+# SCHEDULING TASK FOR MONTHLY REPORT
+@celery.on_after_finalize.connect
+def setup_periodic_email_task(sender, **kwargs):
+    sender.add_periodic_task(
+        crontab(day_of_month='1', hour='0', minute='0'),
+        send_month_report_to_users.s(),
+        name='monthly_report'
+    )
 
-def get_usernames_posted_today():
+####################################
+# DAILY ALERT TASK                 #
+####################################
+
+def get_user_emails_posted_not_today():
     dt = datetime.datetime.now().strftime('%d/%m/%Y') + "%"
-    today_posts = db.session.query(Post).filter(Post.timestamp.not_like(dt)).all()
-    return today_posts
+    today_posts = db.session.query(Post).filter(Post.timestamp.like(dt)).all()
+    today_posts_users = set([post.username for post in today_posts])
+    all_users = db.session.query(User).all()
+    all_users_name_email = [(user.username, user.email) for user in all_users]
+    users_not_posted_today = []
+    for user, email in all_users_name_email:
+        if user not in today_posts_users:
+            users_not_posted_today.append((user, email))
+    return users_not_posted_today
 
 @celery.task()
 def send_email_to_user():
-    print("THIS TASK IS BEING EXECUTED")
-    posts = get_usernames_posted_today()
-    print("--------------------------------------------------------------")
-    print(posts)
-    # Set your SendGrid API key
-    # sg_api_key = "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"
-    # # Set sender, recipient, subject and message body
-    # from_email = 'theraidercomes1@gmail.com'
-    # to_email = 'paarthbhatnagarh3h3@gmail.com'
-    # subject = 'Test email'
-    # html_content = '<p>Hello World!</p>'
+    print("SENDING DAILY EMAILS TASK IS BEING EXECUTED")
+    emails_to_send = get_user_emails_posted_not_today()
+    # print("--------------------------------------------------------------")
+    sg_api_key = "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"
+    from_email = 'theraidercomes1@gmail.com'
+    to_email = [x[1] for x in emails_to_send]
+    subject = 'BlogLite remembers you'
+    html_content = '<p>We see you have not posted anything today, hop onto bloglite to express yourselves</p>'
 
-    # # Create the email message
-    # message = Mail(
-    #     from_email=from_email,
-    #     to_emails=to_email,
-    #     subject=subject,
-    #     html_content=html_content)
-    # # Initialize the SendGrid client
-    # sg = SendGridAPIClient(api_key=sg_api_key)
-    # # Send the email message
-    # response = sg.send(message)
-    # 
-    # print(users_logged_in_today)
-    # print("EMAIL SENTTTT")
+    # Create the email message
+    message = Mail(
+        from_email=from_email,
+        to_emails=to_email,
+        subject=subject,
+        html_content=html_content)
+    # Initialize the SendGrid client
+    sg = SendGridAPIClient(api_key=sg_api_key)
+    # Send the email message
+    sg.send(message)
 
+####################################
+# MONTHLY REPORT GENERATION TASK   #
+####################################
 
 def in_current_month(timestamp):
     dt = datetime.datetime.strptime(timestamp, '%d/%m/%Y %H:%M:%S')
@@ -102,7 +95,6 @@ def generate_monthly_report(username):
 
 @celery.task
 def send_month_report_to_users():
-    print("SENDING EMAILLL")
     all_user_info = db.session.query(User).all()
     for user in all_user_info:
         report = generate_monthly_report(user.username)
@@ -123,6 +115,11 @@ def send_month_report_to_users():
             print(e.message)
     print("EMAIL SENTTT")
 
+
+
+################################
+# EXPORT ASYNC JOB             #
+################################
 @celery.task
 def export_blog_to_csv_task(username, post_id):
     post = db.session.query(Post).filter((Post.id == post_id)).first()

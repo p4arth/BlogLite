@@ -72,6 +72,3 @@ class PostSchema(ma.Schema):
 class FollowersSchema(ma.Schema):
     class Meta:
         fields = ("username", "follows")
-
-# user_schema = UserSchema()
-# users_schema = UserSchema(many=True)

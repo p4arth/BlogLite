@@ -3,13 +3,10 @@ from models.models import *
 from app import app, token_required, cache
 from flask import render_template
 from flask import request
-from flask import jsonify, make_response
+from flask import jsonify
 from sqlalchemy import exc
 from flask_cors import cross_origin
 from models.models import PostSchema
-import csv
-from io import StringIO
-# from email_controllers import send_blog_exported_to_csv
 
 @app.route("/api/<username>/publish_new_article", methods = ["POST"])
 @cross_origin(origin = '*', headers = ['Content-type'])
@@ -167,25 +164,4 @@ def get_post_api(post_id):
 def user_blogs(username):
     posts_schema = PostSchema(many=True)
     posts = db.session.query(Post).filter((Post.username == username)).all()
-    return posts_schema.dump(posts) 
-
-
-# @app.route("/api/get/blog/<username>")
-# @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
-# def export_blog_csv(username):
-#     post_id = request.args.get('post_id')
-#     post = db.session.query(Post).filter((Post.id == post_id)).first()
-#     data = [
-#         ["id", "title", "caption", "username", "image_url", "timestamp"],
-#         [post.id, post.title, post.caption, post.username, post.image_url, post.timestamp],
-#     ]
-#     output = StringIO()
-#     writer = csv.writer(output)
-#     writer.writerows(data)
-#     response = make_response(output.getvalue())
-#     response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
-#     response.mimetype = 'text/csv'
-#     return response
-
-
+    return posts_schema.dump(posts)

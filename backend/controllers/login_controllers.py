@@ -70,22 +70,6 @@ def login_page():
                 return jsonify({"username": username, "status": "Not Authenticated", "auth_token": None})
         except:
             return jsonify({"username": username, "status": "Error", "auth_token": None})
-
-# @app.route("/api/<username>/homepage", methods = ["GET"])
-# @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
-# def display_user_homepage(username):
-#     posts_schema = PostSchema(many = True)
-#     users_schema = UserSchema(many = True)
-#     recent_feed_data, user_blogs_data = user_feed_data(username)
-#     posts =  db.session.query(Post).filter((Post.id != -1) & (Post.username != username)).all()
-#     recommended_posts = list(np.random.choice(posts, 3))
-#     users = db.session.query(User).filter(User.username != username).all()
-#     if len(recent_feed_data) > 0:
-#         return {"follower_blogs": posts_schema.dump(recent_feed_data),
-#                 "recommendation_blogs": posts_schema.dump(recommended_posts)}
-#     else:
-#         return users_schema.dump(users[:5])
     
 @app.route("/api/<username>/homepage", methods=["GET"])
 @cross_origin(origin='*', headers=['Content-type'])
@@ -148,11 +132,13 @@ def get_search_results():
         if not query:
             raise ValueError("Missing Query Parameter")
         query = "%" + query + "%"
-        search_users = User.query.filter(User.username.like(query)).all()
-        if not search_users:
+        search_users_1 = User.query.filter(User.username.like(query)).all()
+        search_users_2 = User.query.filter(User.full_name.like(query)).all()
+        search_users_1.extend(search_users_2)
+        if not search_users_1:
             return {"message": "No results found."}, 200
         users_schema = UserSchema(many=True)
-        return {"results": users_schema.dump(search_users)}, 200
+        return {"results": users_schema.dump(list(set(search_users_1)))}, 200
     except ValueError as e:
         return {"error": str(e)}, 400
     except Exception as e:

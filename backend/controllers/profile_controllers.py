@@ -1,9 +1,8 @@
 from models.models import *
 from app import app, token_required, cache
-from flask import render_template
 from flask import request
 from flask_cors import cross_origin
-from flask import redirect, jsonify
+from flask import jsonify
 from models.models import User, db, FollowersSchema
 from controllers.email_controllers import send_email_to_user
 
@@ -17,8 +16,6 @@ def render_my_profile(username):
     user_followers = db.session.query(Followers).filter(Followers.username == username).all()
     follower_count = len(followers_of_profile)
     following_count = len(user_followers)
-    # print("-"*50)
-    # print(user.pfp_link)
     return jsonify({
         "full_name": user.full_name,
         "followers_count": follower_count,
@@ -28,16 +25,6 @@ def render_my_profile(username):
         "biotext": user.biotext,
         "pfp_link": user.pfp_link,
     })
-    # if request.method == "POST":
-    #     newBioText = request.form.get("newBioText")
-    #     newPictureLink = request.form.get("pictureLink")
-    #     user_index = user_csv_sub.index
-    #     if newBioText:
-    #         user_csv.loc[user_index[0],"user_bio_text"] = newBioText
-    #     if newPictureLink:
-    #         user_csv.loc[user_index[0],"user_profile_pic_link"] = newPictureLink
-    #     user_csv.to_csv("./instance/metadata.csv", index = False)
-    #     return redirect(f"/{username}/my-profile")
 
 @app.route("/api/get/<username>/follows/<other_user>", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
@@ -75,82 +62,9 @@ def follow_func(username):
         return jsonify({
             'auth': "DELETED"
         })
-    
-
-@app.route("/<current_user>/profile/<profile_username>", methods = ["GET", "POST"])
-def render_user_profile(current_user, profile_username):
-    flag = False
-    followers_of_profile = db.session.query(Followers).filter(Followers.follows == profile_username).all()
-    follower_count = len(followers_of_profile)
-    following_of_profile = db.session.query(Followers).filter(Followers.username == profile_username).all()
-    following_count = len(following_of_profile)
-    
-    post_list = db.session.query(Post).filter(Post.username == profile_username).all()
-    follow_obj = db.session.query(Followers).filter(
-                (Followers.username == current_user) & (Followers.follows == profile_username)).first()
-    profile_blogs = db.session.query(Post).filter(Post.username == profile_username).all()
-    follow_value = "Follow"
-    if follow_obj is not None:
-        follow_value = "Following"
-    
-    user_csv = pd.read_csv("./instance/metadata.csv")
-    user_csv_sub = user_csv[user_csv.username == profile_username]
-    bio_text = str(user_csv_sub["user_bio_text"].iloc[0])
-    profile_picture = str(user_csv_sub["user_profile_pic_link"].iloc[0])
-    if request.method == "POST":
-        try:
-            following_status = request.form["follow-button"]
-            user = db.session.query(User).filter(User.username == profile_username).first()
-            if following_status == "Following":
-                follow_obj = Followers(username_ = current_user, follows_= profile_username)
-                user.follower_count = user.follower_count + 1
-                db.session.add(user)
-                db.session.add(follow_obj)
-                db.session.commit()
-            else:
-                user.follower_count = user.follower_count - 1
-                db.session.add(user)
-                db.session.delete(follow_obj)
-                db.session.commit()
-            followers_of_profile = db.session.query(Followers).filter(Followers.follows == profile_username).all()
-            follower_count = len(followers_of_profile)
-            following_of_profile = db.session.query(Followers).filter(Followers.username == profile_username).all()
-            following_count = len(following_of_profile)
-        except:
-            return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-        return redirect(f"/{current_user}/profile/{profile_username}")
-    else:
-        return render_template("user_profile.html",
-                                flag = flag,
-                                default_bio_text = bio_text,
-                                default_profile_picture = profile_picture,
-                                follow_value = follow_value,
-                                post_list = post_list,
-                                profile_username = profile_username,
-                                username = current_user,
-                                profile_blogs = profile_blogs,
-                                follower_count = follower_count,
-                                following_count = following_count,
-                                followers_info = followers_of_profile,
-                                following_info = following_of_profile)
-
-@app.route("/<username>/homepage/search/", methods = ["GET", "POST"])
-def search_user_and_render_search_page(username):
-    if request.method == "GET":
-        args = request.args["searched_username"]
-        tag = f"%{args}%"
-        try:
-            search_query = db.session.query(User).filter(User.username.like(tag)).all()
-        except:
-            return render_template("error.html", message = "Some error occoured. If this issue persists please contact the support.")
-        return render_template("search_page.html",
-                                username = username, 
-                                search_results = search_query)
-
 
 @app.route("/api/get/profile_picture/<username>", methods = ["GET"])
 @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
 def get_user_profile(username):
     user = db.session.query(User).filter(User.username == username).first()
     return jsonify({
@@ -174,17 +88,3 @@ def change_user_profile(username):
     return jsonify({
         "auth": "success",
     })
-
-# @app.route("/api/user_follow_suggestions/<username>", methods = ["GET"])
-# @cross_origin(origin = '*', headers = ['Content-type'])
-# @token_required
-# def get_user_follow_suggestions(username):
-#     users = db.session.query(User).filter(User.username != username)
-#     users_schema = UserSchema(many=True)
-#     return users_schema.dump(users)
-
-# @app.route('/send-email', methods = ['GET', 'POST'])
-# def send_email():
-#     # user_id = request.json.get('user_id')
-#     send_email_to_user.delay()
-#     return jsonify({'message': 'Email sent'})

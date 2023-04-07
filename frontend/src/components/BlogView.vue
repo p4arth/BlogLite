@@ -6,12 +6,14 @@
     <div v-if="flag === ''" class="main-blogpage">
         <div id="title">
             <h1>
-                {{ post.title }}
+                {{ post.title }} 
+                <p style="font-size: large;">By {{ post.username }}</p>
             </h1>
         </div>
         <div id="image">
-            <img :src="post.image_url" style="width:500px;height:300px">
+            <img v-if="post.image_url" :src="post.image_url" style="width:500px;height:300px">
         </div>
+        <br>
         <div id="content" v-html="post.caption"></div>
     </div>
     <div class="main-blogpage" v-else>

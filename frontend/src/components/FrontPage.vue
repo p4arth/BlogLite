@@ -14,7 +14,8 @@
            style="background-color: lightsalmon;
                   width: 40%;
                   height: 70vh;
-                  float: left;">
+                  float: left;
+                  border-right: 2px solid #494949;">
         <div class = "jumbotron-content" >
         </div>
       </div>

@@ -81,6 +81,7 @@
                     </div>
                     <div id = "password-div">
                       <input id="password" 
+                             type="password"
                              name="password" 
                              placeholder = "Enter password" 
                              autocomplete = "off" v-model="password" required />

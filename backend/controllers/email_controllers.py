@@ -19,7 +19,7 @@ def setup_periodic_email_task(sender, **kwargs):
     sender.add_periodic_task(
         crontab(minute='0', hour='17'),
         send_email_to_user.s(),
-        name="At every 10"
+        name="daily_reminder"
     )
 
 # SCHEDULING TASK FOR MONTHLY REPORT
@@ -51,7 +51,6 @@ def get_user_emails_posted_not_today():
 def send_email_to_user():
     print("SENDING DAILY EMAILS TASK IS BEING EXECUTED")
     emails_to_send = get_user_emails_posted_not_today()
-    # print("--------------------------------------------------------------")
     sg_api_key = "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"
     from_email = 'theraidercomes1@gmail.com'
     to_email = [x[1] for x in emails_to_send]

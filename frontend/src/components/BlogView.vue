@@ -52,7 +52,7 @@ export default{
                 this.post = await response;
                 console.log(this.post);
                 if (this.post.username !== this.$route.params.username){
-                    this.flag = "YOU SNEAKY FUCKERRR";
+                    this.flag = "YOU ARE NOT ALLOWED TO DO THIS ACTION";
                 }
             }
         postData();
